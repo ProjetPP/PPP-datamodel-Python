@@ -1,3 +1,4 @@
+"""Module containing exception classes."""
 
 class PPPDatamodelException(Exception):
     """Base class for PPP exceptions."""

@@ -1,8 +1,6 @@
+"""Classes representing the data model of the Projet Pensées Profondes."""
+
 from .abstractnode import AbstractNode
 from .triple import Triple
 
-__all__ = ['AbstractNode', 'Triple', 'type_to_class']
-
-type_to_class = {
-        'triple': Triple
-        }
+__all__ = ['AbstractNode', 'Triple']

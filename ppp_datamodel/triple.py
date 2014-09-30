@@ -1,4 +1,6 @@
-from . import AbstractNode
+"""Contains the class representing a triple."""
+
+from .abstractnode import TYPE_TO_CLASS, AbstractNode
 
 class Triple(AbstractNode):
     """Represents a triple.
@@ -6,3 +8,5 @@ class Triple(AbstractNode):
     """
     _type = 'triple'
     _possible_attributes = ('subject', 'predicate', 'object')
+
+TYPE_TO_CLASS['triple'] = Triple
