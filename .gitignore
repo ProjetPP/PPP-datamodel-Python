@@ -2,3 +2,5 @@
 *.pyc
 *.pyo
 build/
+dist/
+*.egg-info/
