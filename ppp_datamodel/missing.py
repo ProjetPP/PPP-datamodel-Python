@@ -1,0 +1,12 @@
+"""Contains the class representing a “missing” leaf."""
+
+from .abstractnode import register, AbstractNode
+
+@register
+class Resource(AbstractNode):
+    """Represents a “missing” node.
+    https://github.com/ProjetPP/Documentation/blob/master/data-model.md#missing
+    """
+    _type = 'missing'
+    _possible_attributes = ()
+

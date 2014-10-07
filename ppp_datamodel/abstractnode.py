@@ -5,6 +5,11 @@ import json
 from . import exceptions
 
 TYPE_TO_CLASS = {}
+def register(cls):
+    """Register a class to make it available to the deserializer."""
+    assert cls._type
+    TYPE_TO_CLASS[cls._type] = cls
+    return cls
 
 class AbstractNode:
     """Base class for PPP nodes."""

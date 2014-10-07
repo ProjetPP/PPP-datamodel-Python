@@ -1,7 +1,8 @@
-"""Contains the class representing a triple."""
+"""Contains the class representing a triple node."""
 
-from .abstractnode import TYPE_TO_CLASS, AbstractNode
+from .abstractnode import register, AbstractNode
 
+@register
 class Triple(AbstractNode):
     """Represents a triple.
     https://github.com/ProjetPP/Documentation/blob/master/data-model.md#triple
@@ -9,4 +10,3 @@ class Triple(AbstractNode):
     _type = 'triple'
     _possible_attributes = ('subject', 'predicate', 'object')
 
-TYPE_TO_CLASS['triple'] = Triple
