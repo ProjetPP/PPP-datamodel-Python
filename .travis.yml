@@ -4,8 +4,14 @@ python:
   - 3.3
   - 3.4
 
+install:
+    - pip install scrutinizer-ocular coverage
+
 before_script:
   - ./setup.py install
 
 script:
-  - ./run_tests.py
+  - coverage3 run run_tests.py
+
+after_script:
+  - ocular --data-file ".coverage"
