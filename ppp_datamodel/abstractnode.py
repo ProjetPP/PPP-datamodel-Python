@@ -20,16 +20,21 @@ class AbstractNode:
         # Sanity checks
         if self._type is None or self._possible_attributes is None:
             raise TypeError('%s is an abstract class.' % self.__class__)
+        self._check_attributes(attributes)
+
+        # Add the attributes object
+        self._attributes = attributes
+        self._attributes['type'] = self.type
+
+    def _check_attributes(self, attributes):
+        """Check if attributes given to the constructor can be used to
+        instanciate a valid node."""
         if 'type' in attributes:
             assert attributes.pop('type') == self.type
         unknown_keys = set(attributes) - set(self._possible_attributes)
         if unknown_keys:
             raise TypeError('%s node got unknown attributes: %s' %
                             (self._type, unknown_keys))
-
-        # Add the attributes object
-        self._attributes = attributes
-        self._attributes['type'] = self.type
 
     @property
     def type(self):
@@ -60,6 +65,14 @@ class AbstractNode:
         conv = lambda v: v.as_json() if isinstance(v, AbstractNode) else v
         return json.dumps({k: conv(v) for (k, v) in self._attributes.items()})
 
+    @staticmethod
+    def _test_can_import_json(data):
+        """Sanity check on input JSON data"""
+        if 'type' not in data:
+            raise exceptions.AttributeNotProvided('type')
+        if data['type'] not in TYPE_TO_CLASS:
+            raise exceptions.UnknownNodeType(data['type'])
+
     @classmethod
     def from_json(cls, data):
         """Decode a JSON string and inflate a node instance."""
@@ -68,11 +81,7 @@ class AbstractNode:
             data = json.loads(data)
         assert isinstance(data, dict)
 
-        # Sanity checks
-        if 'type' not in data:
-            raise exceptions.AttributeNotProvided('type')
-        if data['type'] not in TYPE_TO_CLASS:
-            raise exceptions.UnknownNodeType(data['type'])
+        cls._test_can_import_json(data)
 
         # Create node instances
         conv = lambda v: cls.from_json(v) if isinstance(v, dict) else v
