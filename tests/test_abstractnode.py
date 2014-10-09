@@ -88,3 +88,4 @@ class BaseAbstractNodeTests(TestCase):
         self.assertNotEqual(Missing(), {'type': 'missing', 'f': 'b'})
         self.assertEqual(Resource('foo'), {'type': 'resource',
                                            'value': 'foo'})
+        self.assertNotEqual(Missing(), '')
