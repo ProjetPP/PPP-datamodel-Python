@@ -76,3 +76,15 @@ class BaseAbstractNodeTests(TestCase):
             'subject': r('s'), 'predicate': r('p'), 'object': m()}
         self.assertRaises(exceptions.UnknownNodeType,
                 AbstractNode.from_json, d)
+
+    def testCheckType(self):
+        self.assertRaises(TypeError, Triple, {})
+
+    def testEq(self):
+        self.assertEqual(Missing(), Missing())
+        self.assertEqual(Resource('foo'), Resource('foo'))
+        self.assertNotEqual(Missing(), Resource('foo'))
+        self.assertEqual(Missing(), {'type': 'missing'})
+        self.assertNotEqual(Missing(), {'type': 'missing', 'f': 'b'})
+        self.assertEqual(Resource('foo'), {'type': 'resource',
+                                           'value': 'foo'})

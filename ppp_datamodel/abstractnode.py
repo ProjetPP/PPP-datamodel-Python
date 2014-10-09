@@ -18,9 +18,9 @@ class AbstractNode:
     _possible_attributes = None
     def __init__(self, *args, **attributes):
         # Sanity checks
-        attributes.update(dict(zip(self._possible_attributes, args)))
         if self._type is None or self._possible_attributes is None:
             raise TypeError('%s is an abstract class.' % self.__class__)
+        attributes.update(dict(zip(self._possible_attributes, args)))
         self._check_attributes(attributes)
 
         # Add the attributes object
@@ -57,8 +57,6 @@ class AbstractNode:
 
     def get(self, name):
         """Get an attribute of the node (read-only access)."""
-        if name.startswith('_'):
-            return self.__dict__[name]
         if name not in self._possible_attributes:
             raise AttributeError('%s is not a valid attribute of %r.' %
                                  (name, self))
