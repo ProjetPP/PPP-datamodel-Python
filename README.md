@@ -37,6 +37,8 @@ An example:
 >>> my_triple = ppp_datamodel.Triple(subject=ppp_datamodel.Resource(value='George Washington'), predicate=ppp_datamodel.Resource(value='birth date'), object=ppp_datamodel.Missing())
 >>> print(my_triple.as_json())
 {"type": "triple", "predicate": {"type": "resource", "value": "birth date"}, "subject": {"type": "resource", "value": "George Washington"}, "object": {"type": "missing"}}
+>>> my_triple.predicate
+<PPP node "resource" {'value': 'birth date'}>
 ```
 
 You can also deserialize them:
