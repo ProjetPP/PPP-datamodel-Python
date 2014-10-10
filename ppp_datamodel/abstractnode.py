@@ -16,10 +16,11 @@ class AbstractNode:
     __slots__ = ('_attributes')
     _type = None
     _possible_attributes = None
-    def __init__(self, **attributes):
+    def __init__(self, *args, **attributes):
         # Sanity checks
         if self._type is None or self._possible_attributes is None:
             raise TypeError('%s is an abstract class.' % self.__class__)
+        attributes.update(dict(zip(self._possible_attributes, args)))
         self._check_attributes(attributes)
 
         # Add the attributes object
@@ -42,7 +43,17 @@ class AbstractNode:
         return self._type
 
     def __repr__(self):
-        return '<PPP node "%s" %r>' % (self.type, self._attributes)
+        return '<PPP node "%s" %r>' % (self.type,
+                {x:y for (x,y) in self._attributes.items() if x != 'type'})
+
+    def __eq__(self, other):
+        """Tests equality with another abstractnode instance."""
+        if isinstance(other, dict):
+            return self.as_dict() == other
+        elif isinstance(other, AbstractNode):
+            return self._attributes == other._attributes
+        else:
+            return False
 
     def get(self, name):
         """Get an attribute of the node (read-only access)."""
@@ -60,10 +71,13 @@ class AbstractNode:
         return name in self._attributes
     __hasattr__ = __contains__ = has
 
+    def as_dict(self):
+        """Returns a JSON-serializeable object representing this tree."""
+        conv = lambda v: v.as_dict() if isinstance(v, AbstractNode) else v
+        return {k: conv(v) for (k, v) in self._attributes.items()}
     def as_json(self):
         """Return a JSON dump of the object."""
-        conv = lambda v: v.as_json() if isinstance(v, AbstractNode) else v
-        return json.dumps({k: conv(v) for (k, v) in self._attributes.items()})
+        return json.dumps(self.as_dict())
 
     @staticmethod
     def _test_can_import_json(data):

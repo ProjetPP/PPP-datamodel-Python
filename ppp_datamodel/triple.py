@@ -10,3 +10,8 @@ class Triple(AbstractNode):
     _type = 'triple'
     _possible_attributes = ('subject', 'predicate', 'object')
 
+    def _check_attributes(self, attributes):
+        super(Triple, self)._check_attributes(attributes)
+        if not all(isinstance(x, AbstractNode) for x in attributes.values()):
+            raise TypeError('One of Triple\'s constructor argument '
+                            'is not an AbstractNode instance.')
