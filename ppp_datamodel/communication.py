@@ -32,9 +32,12 @@ class Request:
             data = json.loads(data)
         return Request(data['language'], data['tree'])
 
+
+    def as_dict(self):
+        return {'language': self.language,
+                'tree': self.tree.as_dict()}
     def as_json(self):
-        return json.dumps({'language': self.language,
-                           'tree': self.tree.as_dict()})
+        return json.dumps(self.as_dict())
 
 class Response:
     """Represents a response.
@@ -66,7 +69,9 @@ class Response:
             data = json.loads(data)
         return Response(data['language'], data['pertinence'], data['tree'])
 
+    def as_dict(self):
+        return {'language': self.language,
+                'pertinence': self.pertinence,
+                'tree': self.tree.as_dict()}
     def as_json(self):
-        return json.dumps({'language': self.language,
-                           'pertinence': self.pertinence,
-                           'tree': self.tree.as_dict()})
+        return json.dumps(self.as_dict())
