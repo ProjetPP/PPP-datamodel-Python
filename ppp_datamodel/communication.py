@@ -32,6 +32,10 @@ class Request:
             data = json.loads(data)
         return Request(data['language'], data['tree'])
 
+    def as_json(self):
+        return json.dumps({'language': self.language,
+                           'tree': self.tree.as_dict()})
+
 class Response:
     """Represents a response.
     https://github.com/ProjetPP/Documentation/blob/master/module-communication.md#response
@@ -61,3 +65,8 @@ class Response:
         if isinstance(data, str):
             data = json.loads(data)
         return Response(data['language'], data['pertinence'], data['tree'])
+
+    def as_json(self):
+        return json.dumps({'language': self.language,
+                           'pertinence': self.pertinence,
+                           'tree': self.tree.as_dict()})

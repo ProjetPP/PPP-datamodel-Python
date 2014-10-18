@@ -28,6 +28,7 @@ class RequestTest(TestCase):
                          Request.from_json(j))
         self.assertEqual(Request('en', Resource(value='foo')),
                          Request.from_json(json.dumps(j)))
+        self.assertEqual(Request.from_json(j).as_json(), json.dumps(j))
 
 class ResponseTest(TestCase):
     def testEquality(self):
@@ -53,3 +54,4 @@ class ResponseTest(TestCase):
                          Response.from_json(r))
         self.assertEqual(Response('en', 0.5, Resource(value='foo')),
                          Response.from_json(json.dumps(r)))
+        self.assertEqual(Response.from_json(r).as_json(), json.dumps(r))
