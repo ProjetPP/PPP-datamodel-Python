@@ -8,9 +8,8 @@ class Request:
     """
     __slots__ = ('language', 'pertinence', 'tree')
 
-    def __init__(self, language, pertinence, tree):
+    def __init__(self, language, tree):
         assert isinstance(tree, AbstractNode)
-        assert 0 <= pertinence <= 1
         self.language = language
         self.tree = tree
 
