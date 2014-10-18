@@ -55,6 +55,13 @@ class AbstractNode:
         else:
             return False
 
+    def fold(self, predicate):
+        """Takes a predicate and applies it to each node starting from the
+        leaves and making the return value propagate."""
+        childs = {x:y.fold(predicate) for (x,y) in self._attributes.items()
+                  if isinstance(y, AbstractNode)}
+        return predicate(self, childs)
+
     def get(self, name):
         """Get an attribute of the node (read-only access)."""
         if name not in self._possible_attributes:
