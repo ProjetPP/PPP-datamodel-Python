@@ -47,7 +47,7 @@ class Response:
 
     def __repr__(self):
         return '<PPP response language=%r, pertinence=%r, tree=%r>' % \
-                (self._language, self._pertinence, self._tree)
+                (self.language, self.pertinence, self.tree)
 
     def __eq__(self, other):
         if isinstance(other, dict) or isinstance(other, str):
