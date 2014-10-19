@@ -23,8 +23,8 @@ class Request:
                 (self.language, self.tree, self.sentence)
 
     def __eq__(self, other):
-        if isinstance(other, dict) or isinstance(other, str):
-            other = Request.from_json(other)
+        if not isinstance(other, Request):
+            return False
         return self.language == other.language and \
                 self.tree == other.tree and \
                 self.sentence == other.sentence
@@ -68,8 +68,8 @@ class Response:
                 (self.language, self.pertinence, self.tree)
 
     def __eq__(self, other):
-        if isinstance(other, dict) or isinstance(other, str):
-            other = Response.from_json(other)
+        if not isinstance(other, Response):
+            return False
         return self.language == other.language and \
                 self.pertinence == other.pertinence and \
                 self.tree == other.tree

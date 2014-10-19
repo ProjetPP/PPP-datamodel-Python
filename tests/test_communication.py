@@ -10,15 +10,9 @@ class RequestTest(TestCase):
                          Request('en', Resource(value='foo')))
         self.assertNotEqual(Request('en', Resource(value='foo')),
                             Request('en', Resource(value='bar')))
-        self.assertEqual(Request('en', Resource(value='foo')),
-                         {'language': 'en',
-                          'tree': {'type': 'resource', 'value': 'foo'}})
-        self.assertNotEqual(Request('en', Resource(value='foo')),
-                            {'language': 'en',
-                             'tree': {'type': 'resource', 'value': 'bar'}})
 
     def testRepr(self):
-        r="<PPP request language='en', tree=<PPP node \"resource\" {'value': 'foo'}>>"
+        r="<PPP request language='en', tree=<PPP node \"resource\" {'value': 'foo'}>, sentence=None>"
         self.assertEqual(repr(Request('en', Resource(value='foo'))), r)
 
     def testFromJson(self):
@@ -36,12 +30,6 @@ class ResponseTest(TestCase):
                          Response('en', 1, Resource(value='foo')))
         self.assertNotEqual(Response('en', 1, Resource(value='foo')),
                             Response('en', 1, Resource(value='bar')))
-        self.assertEqual(Response('en', 1, Resource(value='foo')),
-                         {'language': 'en', 'pertinence': 1,
-                          'tree': {'type': 'resource', 'value': 'foo'}})
-        self.assertNotEqual(Response('en', 1, Resource(value='foo')),
-                            {'language': 'en', 'pertinence': 1,
-                             'tree': {'type': 'resource', 'value': 'bar'}})
 
     def testRepr(self):
         r="<PPP response language='en', pertinence=0.5, tree=<PPP node \"resource\" {'value': 'foo'}>>"
