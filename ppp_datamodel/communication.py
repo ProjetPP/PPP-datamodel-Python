@@ -26,18 +26,27 @@ class Request:
         if isinstance(other, dict) or isinstance(other, str):
             other = Request.from_json(other)
         return self.language == other.language and \
-                self.tree == other.tree
+                self.tree == other.tree and \
+                self.sentence == other.sentence
 
     @staticmethod
     def from_json(data):
         if isinstance(data, str):
             data = json.loads(data)
-        return Request(data['language'], data['tree'])
+        if 'tree' not in data and 'sentence' not in data:
+            raise KeyError("'tree' or 'sentence'")
+        return Request(data['language'],
+                       data.get('tree', None),
+                       data.get('sentence', None))
 
 
     def as_dict(self):
-        return {'language': self.language,
-                'tree': self.tree.as_dict()}
+        d = {'language': self.language}
+        if self.tree:
+            d['tree'] = self.tree.as_dict()
+        if self.sentence:
+            d['sentence'] = self.sentence.as_dict()
+        return d
     def as_json(self):
         return json.dumps(self.as_dict())
 
