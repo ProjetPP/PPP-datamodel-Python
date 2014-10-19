@@ -10,14 +10,12 @@ class Request:
     """
     __slots__ = ('language', 'sentence', 'tree')
 
-    def __init__(self, language, tree_or_sentence, is_sentence=False):
-        if is_sentence:
-            self.sentence = tree_or_sentence
-        else:
-            tree = tree_or_sentence
-            if isinstance(tree, dict) or isinstance(tree, str):
-                tree = AbstractNode.from_json(tree)
-            self.tree = tree
+    def __init__(self, language, tree=None, sentence=None):
+        assert tree or sentence
+        self.sentence = sentence
+        if isinstance(tree, dict) or isinstance(tree, str):
+            tree = AbstractNode.from_json(tree)
+        self.tree = tree
         self.language = language
 
     def __repr__(self):
