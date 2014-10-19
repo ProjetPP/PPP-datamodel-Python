@@ -8,13 +8,17 @@ class Request:
     """Represents a request.
     https://github.com/ProjetPP/Documentation/blob/master/module-communication.md#request
     """
-    __slots__ = ('language', 'pertinence', 'tree')
+    __slots__ = ('language', 'sentence', 'tree')
 
-    def __init__(self, language, tree):
-        if isinstance(tree, dict) or isinstance(tree, str):
-            tree = AbstractNode.from_json(tree)
+    def __init__(self, language, tree_or_sentence, is_sentence=False):
+        if is_sentence:
+            self.sentence = tree_or_sentence
+        else:
+            tree = tree_or_sentence
+            if isinstance(tree, dict) or isinstance(tree, str):
+                tree = AbstractNode.from_json(tree)
+            self.tree = tree
         self.language = language
-        self.tree = tree
 
     def __repr__(self):
         return '<PPP request language=%r, tree=%r>' % \
