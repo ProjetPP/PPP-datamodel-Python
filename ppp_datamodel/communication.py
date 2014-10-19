@@ -19,8 +19,8 @@ class Request:
         self.language = language
 
     def __repr__(self):
-        return '<PPP request language=%r, tree=%r>' % \
-                (self.language, self.tree)
+        return '<PPP request language=%r, tree=%r, sentence=%r>' % \
+                (self.language, self.tree, self.sentence)
 
     def __eq__(self, other):
         if isinstance(other, dict) or isinstance(other, str):
