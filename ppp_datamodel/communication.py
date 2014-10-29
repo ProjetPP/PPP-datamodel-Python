@@ -111,7 +111,7 @@ class Response:
         self.language = language
         self.measures = measures
         self.tree = tree
-        self.trace = [x if isinstance(x, TraceItem) else TraceItem(x)
+        self.trace = [x if isinstance(x, TraceItem) else TraceItem.from_dict(x)
                       for x in trace]
 
     def __repr__(self):
