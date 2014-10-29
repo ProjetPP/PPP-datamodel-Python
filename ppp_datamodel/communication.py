@@ -8,17 +8,10 @@ class Request:
     """Represents a request.
     https://github.com/ProjetPP/Documentation/blob/master/module-communication.md#request
     """
-    __slots__ = ('id', 'language', 'tree', 'sentence', 'measures', 'trace')
+    __slots__ = ('id', 'language', 'tree', 'measures', 'trace')
 
-    def __init__(self, id, language, measures={}, trace=[],
-                 tree=None, sentence=None):
-        assert tree or sentence
+    def __init__(self, id, language, tree, measures={}, trace=[]):
         self.id = id
-        self.sentence = sentence
-        if isinstance(tree, dict):
-            tree = AbstractNode.from_dict(tree)
-        elif isinstance(tree, str):
-            tree = AbstractNode.from_json(tree)
         self.tree = tree
         self.language = language
         self.measures = measures
@@ -34,8 +27,7 @@ class Request:
             return False
         return self.id == other.id and \
                 self.language == other.language and \
-                self.tree == other.tree and \
-                self.sentence == other.sentence
+                self.tree == other.tree
 
     @classmethod
     def from_json(cls, data):
@@ -46,23 +38,20 @@ class Request:
     @classmethod
     def from_dict(cls, data):
         assert isinstance(data, dict)
-        if 'tree' not in data and 'sentence' not in data:
-            raise KeyError("'tree' or 'sentence'")
+        tree = data['tree']
+        if isinstance(tree, dict):
+            tree = AbstractNode.from_dict(tree)
         return cls(data['id'],
                    data['language'],
+                   tree,
                    data['measures'],
-                   data['trace'],
-                   data.get('tree', None),
-                   data.get('sentence', None))
+                   data['trace'])
 
 
     def as_dict(self):
         d = {'id': self.id, 'language': self.language,
-             'measures': self.measures, 'trace': self.trace}
-        if self.tree:
-            d['tree'] = self.tree.as_dict()
-        if self.sentence:
-            d['sentence'] = self.sentence
+             'measures': self.measures, 'trace': self.trace,
+             'tree': self.tree.as_dict()}
         return d
     def as_json(self):
         return json.dumps(self.as_dict())
