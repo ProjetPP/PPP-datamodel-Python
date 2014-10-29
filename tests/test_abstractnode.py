@@ -46,14 +46,15 @@ class BaseAbstractNodeTests(TestCase):
     def testFromJsonPerfect(self):
         d = {'type': 'triple',
             'subject': r('s'), 'predicate': r('p'), 'object': r('o')}
-        self.assertIsInstance(AbstractNode.from_json(d), Triple)
-        self.assertEqual(d, json.loads(AbstractNode.from_json(d).as_json()))
+        self.assertIsInstance(AbstractNode.from_dict(d), Triple)
+        self.assertIsInstance(AbstractNode.from_json(json.dumps(d)), Triple)
+        self.assertEqual(d, json.loads(AbstractNode.from_dict(d).as_json()))
         self.assertEqual(d, json.loads(AbstractNode.from_json(json.dumps(d)).as_json()))
 
     def testFromJsonMissing(self):
         d = {'type': 'triple',
             'subject': r('s'), 'predicate': r('p')}
-        n = AbstractNode.from_json(d)
+        n = AbstractNode.from_dict(d)
         self.assertEqual(d, json.loads(n.as_json()))
         self.assertEqual(n.predicate, r('p'))
         self.assertNotIn('object', n)
@@ -61,7 +62,7 @@ class BaseAbstractNodeTests(TestCase):
     def testFromJsonNone(self):
         d = {'type': 'triple',
              'subject': r('s'), 'predicate': r('p'), 'object': m()}
-        n = AbstractNode.from_json(d)
+        n = AbstractNode.from_dict(d)
         self.assertEqual(d, json.loads(n.as_json()))
         self.assertIn('object', n)
         self.assertEqual(n.object, M())
@@ -69,13 +70,13 @@ class BaseAbstractNodeTests(TestCase):
     def testFromJsonTypeNotProvided(self):
         d = {'subject': r('s'), 'predicate': r('p'), 'object': m()}
         self.assertRaises(exceptions.AttributeNotProvided,
-                AbstractNode.from_json, d)
+                AbstractNode.from_dict, d)
 
     def testFromJsonTypeInvalid(self):
         d = {'type': 'foobar',
             'subject': r('s'), 'predicate': r('p'), 'object': m()}
         self.assertRaises(exceptions.UnknownNodeType,
-                AbstractNode.from_json, d)
+                AbstractNode.from_dict, d)
 
     def testCheckType(self):
         self.assertRaises(TypeError, Triple, {})
