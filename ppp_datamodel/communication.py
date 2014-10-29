@@ -8,10 +8,11 @@ class Request:
     """Represents a request.
     https://github.com/ProjetPP/Documentation/blob/master/module-communication.md#request
     """
-    __slots__ = ('language', 'sentence', 'tree')
+    __slots__ = ('id', 'language', 'sentence', 'tree')
 
-    def __init__(self, language, tree=None, sentence=None):
+    def __init__(self, id, language, tree=None, sentence=None):
         assert tree or sentence
+        self.id = id
         self.sentence = sentence
         if isinstance(tree, dict):
             tree = AbstractNode.from_dict(tree)
@@ -21,13 +22,14 @@ class Request:
         self.language = language
 
     def __repr__(self):
-        return '<PPP request language=%r, tree=%r, sentence=%r>' % \
-                (self.language, self.tree, self.sentence)
+        return '<PPP request id=%r, language=%r, tree=%r, sentence=%r>' % \
+                (self.id, self.language, self.tree, self.sentence)
 
     def __eq__(self, other):
         if not isinstance(other, Request):
             return False
-        return self.language == other.language and \
+        return self.id == other.id and \
+                self.language == other.language and \
                 self.tree == other.tree and \
                 self.sentence == other.sentence
 
@@ -42,13 +44,14 @@ class Request:
         assert isinstance(data, dict)
         if 'tree' not in data and 'sentence' not in data:
             raise KeyError("'tree' or 'sentence'")
-        return cls(data['language'],
+        return cls(data['id'],
+                   data['language'],
                    data.get('tree', None),
                    data.get('sentence', None))
 
 
     def as_dict(self):
-        d = {'language': self.language}
+        d = {'id': self.id, 'language': self.language}
         if self.tree:
             d['tree'] = self.tree.as_dict()
         if self.sentence:
