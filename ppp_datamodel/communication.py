@@ -8,9 +8,10 @@ class Request:
     """Represents a request.
     https://github.com/ProjetPP/Documentation/blob/master/module-communication.md#request
     """
-    __slots__ = ('id', 'language', 'sentence', 'tree')
+    __slots__ = ('id', 'language', 'tree', 'sentence', 'measures', 'trace')
 
-    def __init__(self, id, language, tree=None, sentence=None):
+    def __init__(self, id, language, measures={}, trace=[],
+                 tree=None, sentence=None):
         assert tree or sentence
         self.id = id
         self.sentence = sentence
@@ -20,10 +21,13 @@ class Request:
             tree = AbstractNode.from_json(tree)
         self.tree = tree
         self.language = language
+        self.measures = measures
+        self.trace = trace
 
     def __repr__(self):
-        return '<PPP request id=%r, language=%r, tree=%r, sentence=%r>' % \
-                (self.id, self.language, self.tree, self.sentence)
+        return '<ppp_datamodel.Request(%s)>' % \
+                ', '.join(map(lambda x:'%s=%r' % (x, getattr(self, x)),
+                              self.__slots__))
 
     def __eq__(self, other):
         if not isinstance(other, Request):
@@ -46,16 +50,19 @@ class Request:
             raise KeyError("'tree' or 'sentence'")
         return cls(data['id'],
                    data['language'],
+                   data['measures'],
+                   data['trace'],
                    data.get('tree', None),
                    data.get('sentence', None))
 
 
     def as_dict(self):
-        d = {'id': self.id, 'language': self.language}
+        d = {'id': self.id, 'language': self.language,
+             'measures': self.measures, 'trace': self.trace}
         if self.tree:
             d['tree'] = self.tree.as_dict()
         if self.sentence:
-            d['sentence'] = self.sentence.as_dict()
+            d['sentence'] = self.sentence
         return d
     def as_json(self):
         return json.dumps(self.as_dict())

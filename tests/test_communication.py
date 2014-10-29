@@ -6,21 +6,21 @@ from ppp_datamodel.communication import Request, TraceItem, Response
 
 class RequestTest(TestCase):
     def testEquality(self):
-        self.assertEqual(Request('1', 'en', Resource(value='foo')),
-                         Request('1', 'en', Resource(value='foo')))
-        self.assertNotEqual(Request('1', 'en', Resource(value='foo')),
-                            Request('1', 'en', Resource(value='bar')))
+        self.assertEqual(Request('1', 'en', {}, [], Resource(value='foo')),
+                         Request('1', 'en', {}, [], Resource(value='foo')))
+        self.assertNotEqual(Request('1', 'en', {}, [], Resource(value='foo')),
+                            Request('1', 'en', {}, [], Resource(value='bar')))
 
     def testRepr(self):
-        r="<PPP request id='1', language='en', tree=<PPP node \"resource\" {'value': 'foo'}>, sentence=None>"
-        self.assertEqual(repr(Request('1', 'en', Resource(value='foo'))), r)
+        r="<ppp_datamodel.Request(id='1', language='en', tree=<PPP node \"resource\" {'value': 'foo'}>, sentence=None, measures={}, trace=[])>"
+        self.assertEqual(repr(Request('1', 'en', {}, [], Resource(value='foo'))), r)
 
     def testFromJson(self):
-        j = {'id': '1', 'language': 'en',
+        j = {'id': '1', 'language': 'en', 'measures': {}, 'trace': [],
              'tree': {'type': 'resource', 'value': 'foo'}}
-        self.assertEqual(Request('1', 'en', Resource(value='foo')),
+        self.assertEqual(Request('1', 'en', {}, [], Resource(value='foo')),
                          Request.from_dict(j))
-        self.assertEqual(Request('1', 'en', Resource(value='foo')),
+        self.assertEqual(Request('1', 'en', {}, [], Resource(value='foo')),
                          Request.from_json(json.dumps(j)))
         self.assertEqual(json.loads(Request.from_dict(j).as_json()), j)
 
