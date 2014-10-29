@@ -1,8 +1,8 @@
 
 import json
 from unittest import TestCase
-from ppp_datamodel import Resource
-from ppp_datamodel.communication import Request, Response
+from ppp_datamodel import Resource, Missing
+from ppp_datamodel.communication import Request, TraceItem, Response
 
 class RequestTest(TestCase):
     def testEquality(self):
@@ -19,27 +19,34 @@ class RequestTest(TestCase):
         j = {'language': 'en',
              'tree': {'type': 'resource', 'value': 'foo'}}
         self.assertEqual(Request('en', Resource(value='foo')),
-                         Request.from_json(j))
+                         Request.from_dict(j))
         self.assertEqual(Request('en', Resource(value='foo')),
                          Request.from_json(json.dumps(j)))
-        self.assertEqual(json.loads(Request.from_json(j).as_json()), j)
+        self.assertEqual(json.loads(Request.from_dict(j).as_json()), j)
 
 class ResponseTest(TestCase):
     def testEquality(self):
-        self.assertEqual(Response('en', 1, Resource(value='foo')),
-                         Response('en', 1, Resource(value='foo')))
-        self.assertNotEqual(Response('en', 1, Resource(value='foo')),
-                            Response('en', 1, Resource(value='bar')))
+        self.assertEqual(Response('en', Resource(value='foo'), {}, []),
+                         Response('en', Resource(value='foo'), {}, []))
+        self.assertNotEqual(Response('en', Resource(value='foo'), {}, []),
+                            Response('en', Resource(value='bar'), {}, []))
+        self.assertNotEqual(Response('en', Resource(value='foo'), {'accuracy': 0.5}, []),
+                            Response('en', Resource(value='foo'), {'accuracy': 0.6}, []))
 
     def testRepr(self):
-        r="<PPP response language='en', pertinence=0.5, tree=<PPP node \"resource\" {'value': 'foo'}>>"
-        self.assertEqual(repr(Response('en', 0.5, Resource(value='foo'))), r)
+        r="<PPP response language='en', tree=<PPP node \"resource\" {'value': 'foo'}>, measures={}, trace=[]>"
+        self.assertEqual(repr(Response('en', Resource(value='foo'), {}, [])), r)
 
     def testFromJson(self):
-        r = {'language': 'en', 'pertinence': 0.5,
+        r = {'language': 'en', 'measures': {},
+             'trace': [{'module': 'foo', 'tree': {'type': 'missing'}, 'measures': {}}],
              'tree': {'type': 'resource', 'value': 'foo'}}
-        self.assertEqual(Response('en', 0.5, Resource(value='foo')),
-                         Response.from_json(r))
-        self.assertEqual(Response('en', 0.5, Resource(value='foo')),
+        t = [TraceItem('foo', Missing(), {})]
+        self.assertEqual(Response('en', Resource(value='foo'), {}, t),
                          Response.from_json(json.dumps(r)))
-        self.assertEqual(json.loads(Response.from_json(r).as_json()), r)
+        self.assertEqual(Response('en', Resource(value='foo'), {}, t),
+                         Response.from_dict(r))
+        self.assertEqual(Response('en', Resource(value='foo'), {}, t),
+                         Response.from_json(json.dumps(r)))
+        self.assertEqual(json.loads(Response.from_dict(r).as_json()), r)
+

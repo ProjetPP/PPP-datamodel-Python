@@ -98,14 +98,17 @@ class AbstractNode:
     def from_json(cls, data):
         """Decode a JSON string and inflate a node instance."""
         # Decode JSON string
-        if isinstance(data, str):
-            data = json.loads(data)
+        assert isinstance(data, str)
+        data = json.loads(data)
         assert isinstance(data, dict)
+        return cls.from_dict(data)
 
+    @classmethod
+    def from_dict(cls, data):
         cls._test_can_import_json(data)
 
         # Create node instances
-        conv = lambda v: cls.from_json(v) if isinstance(v, dict) else v
+        conv = lambda v: cls.from_dict(v) if isinstance(v, dict) else v
         data = {k: conv(v) for (k, v) in data.items()}
         return TYPE_TO_CLASS[data['type']](**data)
 
