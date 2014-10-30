@@ -3,7 +3,7 @@
 from .abstractnode import register, AbstractNode
 
 @register
-class Resource(AbstractNode):
+class Sentence(AbstractNode):
     """Represents a sentence before it is parsed.
     https://github.com/ProjetPP/Documentation/blob/master/data-model.md#sentence
     """
