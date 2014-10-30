@@ -8,30 +8,27 @@ class Request:
     """Represents a request.
     https://github.com/ProjetPP/Documentation/blob/master/module-communication.md#request
     """
-    __slots__ = ('id', 'language', 'sentence', 'tree')
+    __slots__ = ('id', 'language', 'tree', 'measures', 'trace')
 
-    def __init__(self, id, language, tree=None, sentence=None):
-        assert tree or sentence
+    def __init__(self, id, language, tree, measures={}, trace=[]):
         self.id = id
-        self.sentence = sentence
-        if isinstance(tree, dict):
-            tree = AbstractNode.from_dict(tree)
-        elif isinstance(tree, str):
-            tree = AbstractNode.from_json(tree)
+        assert isinstance(tree, str) or isinstance(tree, AbstractNode)
         self.tree = tree
         self.language = language
+        self.measures = measures
+        self.trace = trace
 
     def __repr__(self):
-        return '<PPP request id=%r, language=%r, tree=%r, sentence=%r>' % \
-                (self.id, self.language, self.tree, self.sentence)
+        return '<ppp_datamodel.Request(%s)>' % \
+                ', '.join(map(lambda x:'%s=%r' % (x, getattr(self, x)),
+                              self.__slots__))
 
     def __eq__(self, other):
         if not isinstance(other, Request):
             return False
         return self.id == other.id and \
                 self.language == other.language and \
-                self.tree == other.tree and \
-                self.sentence == other.sentence
+                self.tree == other.tree
 
     @classmethod
     def from_json(cls, data):
@@ -42,20 +39,23 @@ class Request:
     @classmethod
     def from_dict(cls, data):
         assert isinstance(data, dict)
-        if 'tree' not in data and 'sentence' not in data:
-            raise KeyError("'tree' or 'sentence'")
+        tree = data['tree']
+        if isinstance(tree, dict):
+            tree = AbstractNode.from_dict(tree)
         return cls(data['id'],
                    data['language'],
-                   data.get('tree', None),
-                   data.get('sentence', None))
+                   tree,
+                   data['measures'],
+                   data['trace'])
 
 
     def as_dict(self):
-        d = {'id': self.id, 'language': self.language}
-        if self.tree:
-            d['tree'] = self.tree.as_dict()
-        if self.sentence:
-            d['sentence'] = self.sentence.as_dict()
+        tree = self.tree
+        if isinstance(tree, AbstractNode):
+            tree = tree.as_dict()
+        d = {'id': self.id, 'language': self.language,
+             'measures': self.measures, 'trace': self.trace,
+             'tree': tree}
         return d
     def as_json(self):
         return json.dumps(self.as_dict())
