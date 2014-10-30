@@ -12,6 +12,7 @@ class Request:
 
     def __init__(self, id, language, tree, measures={}, trace=[]):
         self.id = id
+        assert isinstance(tree, str) or isinstance(tree, AbstractNode)
         self.tree = tree
         self.language = language
         self.measures = measures
@@ -49,9 +50,12 @@ class Request:
 
 
     def as_dict(self):
+        tree = self.tree
+        if isinstance(tree, AbstractNode):
+            tree = tree.as_dict()
         d = {'id': self.id, 'language': self.language,
              'measures': self.measures, 'trace': self.trace,
-             'tree': self.tree.as_dict()}
+             'tree': tree}
         return d
     def as_json(self):
         return json.dumps(self.as_dict())
