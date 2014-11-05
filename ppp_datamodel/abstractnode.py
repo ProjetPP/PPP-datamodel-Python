@@ -55,6 +55,9 @@ class AbstractNode:
         else:
             return False
 
+    def __hash__(self):
+        return hash(frozenset(self._attributes.items()))
+
     def fold(self, predicate):
         """Takes a predicate and applies it to each node starting from the
         leaves and making the return value propagate."""

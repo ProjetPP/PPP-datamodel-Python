@@ -30,6 +30,9 @@ class Request:
                 self.language == other.language and \
                 self.tree == other.tree
 
+    def __hash__(self):
+        return hash((self.id, self.language, self.tree, self.trace))
+
     @classmethod
     def from_json(cls, data):
         assert isinstance(data, str)
@@ -100,6 +103,9 @@ class TraceItem:
                 self.tree == other.tree and \
                 self.measures == other.measures
 
+    def __hash__(self):
+        return hash((self.module, self.tree, self.measures))
+
 
 class Response:
     """Represents a response.
@@ -129,6 +135,9 @@ class Response:
                 self.tree == other.tree and \
                 self.measures == other.measures and \
                 self.trace == other.trace
+
+    def __hash__(self):
+        return hash((self.language, self.tree, self.measures, self.trace))
 
     @classmethod
     def from_json(cls, data):
