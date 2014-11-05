@@ -54,7 +54,8 @@ class Request:
         if isinstance(tree, AbstractNode):
             tree = tree.as_dict()
         d = {'id': self.id, 'language': self.language,
-             'measures': self.measures, 'trace': self.trace,
+             'measures': self.measures,
+             'trace': [x.as_dict() for x in self.trace],
              'tree': tree}
         return d
     def as_json(self):
