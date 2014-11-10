@@ -21,6 +21,9 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Topic :: Software Development :: Libraries',
     ],
+    install_requires=[
+        'dateutil',
+    ],
     packages=[
         'ppp_datamodel',
     ],

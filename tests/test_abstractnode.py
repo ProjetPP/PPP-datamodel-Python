@@ -1,4 +1,6 @@
 import json
+import datetime
+from dateutil.tz import tzutc
 
 from ppp_datamodel import AbstractNode, Triple, Resource, Missing
 from ppp_datamodel import exceptions
@@ -95,3 +97,13 @@ class BaseAbstractNodeTests(TestCase):
         d = {'type': 'resource', 'value': 'foo', 'value-type': 'bar'}
         o = AbstractNode.from_dict(d)
         self.assertEqual(o.value_type, 'bar')
+
+    def testBoolean(self):
+        d = {'type': 'resource', 'value': '1', 'value-type': 'boolean'}
+        o = AbstractNode.from_dict(d)
+        self.assertEqual(o.value, True)
+
+    def testTime(self):
+        d = {'type': 'resource', 'value': '2010-05-08T23:41:54.000Z', 'value-type': 'time'}
+        o = AbstractNode.from_dict(d)
+        self.assertEqual(o.value, datetime.datetime(2010, 5, 8, 23, 41, 54, tzinfo=tzutc()))
