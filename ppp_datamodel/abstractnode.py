@@ -85,7 +85,7 @@ class AbstractNode:
     def as_dict(self):
         """Returns a JSON-serializeable object representing this tree."""
         conv = lambda v: v.as_dict() if isinstance(v, AbstractNode) else v
-        return {k: conv(v) for (k, v) in self._attributes.items()}
+        return {k.replace('_', '-'): conv(v) for (k, v) in self._attributes.items()}
     def as_json(self):
         """Return a JSON dump of the object."""
         return json.dumps(self.as_dict())
@@ -113,6 +113,6 @@ class AbstractNode:
 
         # Create node instances
         conv = lambda v: cls.from_dict(v) if isinstance(v, dict) else v
-        data = {k: conv(v) for (k, v) in data.items()}
+        data = {k.replace('-', '_'): conv(v) for (k, v) in data.items()}
         return TYPE_TO_CLASS[data['type']](**data)
 

@@ -9,5 +9,5 @@ class Resource(AbstractNode):
     """
     __slots__ = ()
     _type = 'resource'
-    _possible_attributes = ('value',)
+    _possible_attributes = ('value', 'value_type')
 
