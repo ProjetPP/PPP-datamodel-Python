@@ -24,19 +24,22 @@ class AbstractNode:
         attributes.update(dict(zip(self._possible_attributes, args)))
         self._check_attributes(attributes)
 
-        # Add the attributes object
-        self._attributes = attributes
+        self._parse_attributes(attributes)
         self._attributes['type'] = self.type
 
-    def _check_attributes(self, attributes):
+    def _check_attributes(self, attributes, extra=None):
         """Check if attributes given to the constructor can be used to
         instanciate a valid node."""
+        extra = extra or ()
         if 'type' in attributes:
             assert attributes.pop('type') == self.type
-        unknown_keys = set(attributes) - set(self._possible_attributes)
+        unknown_keys = set(attributes) - set(self._possible_attributes) - set(extra)
         if unknown_keys:
             logging.warning('%s node got unknown attributes: %s' %
                             (self._type, unknown_keys))
+
+    def _parse_attributes(self, attributes):
+        self._attributes = attributes
 
     @property
     def type(self):
