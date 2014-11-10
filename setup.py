@@ -22,7 +22,7 @@ setup(
         'Topic :: Software Development :: Libraries',
     ],
     install_requires=[
-        'dateutil',
+        'python-dateutil',
     ],
     packages=[
         'ppp_datamodel',
