@@ -54,3 +54,26 @@ class Resource(AbstractNode):
             logging.warning('Unknown calendar %r. Parsing as gregorian.'%
                             calendar)
         return dateutil.parser.parse(value)
+
+    def as_dict(self):
+        d = self._attributes.copy()
+        type_ = d.get('value_type', 'string')
+        value = d.get('value')
+        if type_ == 'time':
+            d['value'] = self.format_time(value)
+        elif type_ == 'boolean':
+            d['value'] = self.format_boolean(value)
+        if type_ != 'string':
+            d['value-type'] = type_
+        if 'value_type' in d:
+            del d['value_type']
+        return d
+
+
+    @staticmethod
+    def format_time(value):
+        return value.isoformat()
+
+    @staticmethod
+    def format_boolean(value):
+        return 'true' if value else 'false'
