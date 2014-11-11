@@ -23,7 +23,7 @@ class Resource(AbstractNode):
     """
     __slots__ = ()
     _type = 'resource'
-    _value_type = 'string'
+    _value_type = 'unknown'
     _possible_attributes = ('value', 'value_type')
 
     @classmethod
@@ -58,7 +58,10 @@ class Resource(AbstractNode):
             del d['value_type']
         return d
 
-StringResource = Resource
+@register_valuetype
+class StringResource(Resource):
+    _value_type = 'string'
+    _possible_attributes = Resource._possible_attributes + ('language',)
 
 @register_valuetype
 class BooleanResource(Resource):
