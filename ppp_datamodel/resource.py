@@ -83,6 +83,7 @@ class BooleanResource(Resource):
 @register_valuetype
 class TimeResource(Resource):
     _value_type = 'time'
+    _possible_attributes = Resource._possible_attributes + ('calendar',)
 
     @staticmethod
     def _parse_value(value, attributes):
