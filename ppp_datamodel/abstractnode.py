@@ -24,19 +24,22 @@ class AbstractNode:
         attributes.update(dict(zip(self._possible_attributes, args)))
         self._check_attributes(attributes)
 
-        # Add the attributes object
-        self._attributes = attributes
+        self._parse_attributes(attributes)
         self._attributes['type'] = self.type
 
-    def _check_attributes(self, attributes):
+    def _check_attributes(self, attributes, extra=None):
         """Check if attributes given to the constructor can be used to
         instanciate a valid node."""
+        extra = extra or ()
         if 'type' in attributes:
             assert attributes.pop('type') == self.type
-        unknown_keys = set(attributes) - set(self._possible_attributes)
+        unknown_keys = set(attributes) - set(self._possible_attributes) - set(extra)
         if unknown_keys:
             logging.warning('%s node got unknown attributes: %s' %
                             (self._type, unknown_keys))
+
+    def _parse_attributes(self, attributes):
+        self._attributes = attributes
 
     @property
     def type(self):
@@ -66,9 +69,11 @@ class AbstractNode:
                   if isinstance(y, AbstractNode)}
         return predicate(self, childs)
 
-    def get(self, name):
+    def get(self, name, strict=True):
         """Get an attribute of the node (read-only access)."""
-        if name not in self._possible_attributes:
+        if name.startswith('_'):
+            raise AttributeError(self.__class__.__name__, name)
+        elif strict and name not in self._possible_attributes:
             raise AttributeError('%s is not a valid attribute of %r.' %
                                  (name, self))
         elif name in self._attributes:
@@ -85,7 +90,7 @@ class AbstractNode:
     def as_dict(self):
         """Returns a JSON-serializeable object representing this tree."""
         conv = lambda v: v.as_dict() if isinstance(v, AbstractNode) else v
-        return {k: conv(v) for (k, v) in self._attributes.items()}
+        return {k.replace('_', '-'): conv(v) for (k, v) in self._attributes.items()}
     def as_json(self):
         """Return a JSON dump of the object."""
         return json.dumps(self.as_dict())
@@ -113,6 +118,15 @@ class AbstractNode:
 
         # Create node instances
         conv = lambda v: cls.from_dict(v) if isinstance(v, dict) else v
-        data = {k: conv(v) for (k, v) in data.items()}
-        return TYPE_TO_CLASS[data['type']](**data)
+        data = {k.replace('-', '_'): conv(v) for (k, v) in data.items()}
+        while True:
+            cls2 = cls._select_class(data)
+            if cls is cls2:
+                break
+            cls = cls2
+        return cls(**data)
+
+    @classmethod
+    def _select_class(cls, data):
+        return TYPE_TO_CLASS[data['type']]
 
