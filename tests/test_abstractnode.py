@@ -1,6 +1,5 @@
 import json
 import datetime
-from dateutil.tz import tzutc
 
 from ppp_datamodel import AbstractNode, Triple, Resource, Missing
 from ppp_datamodel import exceptions
