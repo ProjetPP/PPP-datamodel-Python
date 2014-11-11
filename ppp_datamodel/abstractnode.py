@@ -71,7 +71,9 @@ class AbstractNode:
 
     def get(self, name):
         """Get an attribute of the node (read-only access)."""
-        if name not in self._possible_attributes:
+        if name.startswith('_'):
+            raise AttributeError(self.__class__.__name__, name)
+        elif name not in self._possible_attributes:
             raise AttributeError('%s is not a valid attribute of %r.' %
                                  (name, self))
         elif name in self._attributes:
@@ -117,5 +119,14 @@ class AbstractNode:
         # Create node instances
         conv = lambda v: cls.from_dict(v) if isinstance(v, dict) else v
         data = {k.replace('-', '_'): conv(v) for (k, v) in data.items()}
-        return TYPE_TO_CLASS[data['type']](**data)
+        while True:
+            cls2 = cls._select_class(data)
+            if cls is cls2:
+                break
+            cls = cls2
+        return cls(**data)
+
+    @classmethod
+    def _select_class(cls, data):
+        return TYPE_TO_CLASS[data['type']]
 

@@ -103,8 +103,3 @@ class BaseAbstractNodeTests(TestCase):
         o = AbstractNode.from_dict(d)
         self.assertEqual(o.value, True)
         self.assertEqual(o.as_dict(), d)
-
-    def testTime(self):
-        d = {'type': 'resource', 'value': '2010-05-08T23:41:54.000Z', 'value-type': 'time'}
-        o = AbstractNode.from_dict(d)
-        self.assertEqual(o.value, datetime.datetime(2010, 5, 8, 23, 41, 54, tzinfo=tzutc()))
