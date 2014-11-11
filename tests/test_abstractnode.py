@@ -94,9 +94,14 @@ class BaseAbstractNodeTests(TestCase):
         self.assertNotEqual(Missing(), '')
 
     def testValueType(self):
-        d = {'type': 'resource', 'value': 'foo', 'value-type': 'bar'}
+        d = {'type': 'resource', 'value': 'foo', 'value-type': 'bar',
+             'extra': 'baz'}
         o = AbstractNode.from_dict(d)
         self.assertEqual(o.value_type, 'bar')
+        self.assertFalse(hasattr(o, 'extra'))
+        self.assertRaises(AttributeError, o.get, 'extra')
+        self.assertEqual(o.get('extra', strict=False), 'baz')
+        self.assertEqual(o.as_dict(), d)
 
     def testBoolean(self):
         d = {'type': 'resource', 'value': 'true', 'value-type': 'boolean'}

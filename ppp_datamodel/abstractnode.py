@@ -69,11 +69,11 @@ class AbstractNode:
                   if isinstance(y, AbstractNode)}
         return predicate(self, childs)
 
-    def get(self, name):
+    def get(self, name, strict=True):
         """Get an attribute of the node (read-only access)."""
         if name.startswith('_'):
             raise AttributeError(self.__class__.__name__, name)
-        elif name not in self._possible_attributes:
+        elif strict and name not in self._possible_attributes:
             raise AttributeError('%s is not a valid attribute of %r.' %
                                  (name, self))
         elif name in self._attributes:
