@@ -7,7 +7,7 @@ python:
   - pypy3
 
 install:
-    - pip install scrutinizer-ocular coverage python-dateutil
+    - pip install scrutinizer-ocular coverage
 
 before_script:
   - ./setup.py install
