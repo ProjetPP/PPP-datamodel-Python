@@ -112,3 +112,7 @@ class BaseAbstractNodeTests(TestCase):
         d = {'type': 'resource', 'value': '2010-05-08T23:41:54.000Z', 'value-type': 'time'}
         o = AbstractNode.from_dict(d)
         self.assertEqual(o.value, '2010-05-08T23:41:54.000Z')
+
+    def testDeserialize(self):
+        d = {'type': 'resource', 'value': 'foo', 'value-type': 'bar', 'baz-qux': 'quux'}
+        self.assertEqual(AbstractNode.from_dict(d).as_dict(), d)
