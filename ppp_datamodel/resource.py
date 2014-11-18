@@ -60,6 +60,10 @@ class StringResource(Resource):
     _possible_attributes = Resource._possible_attributes + ('language',)
 
 @register_valuetype
+class MathLatexResource(Resource):
+    _value_type = 'math-latex'
+
+@register_valuetype
 class BooleanResource(Resource):
     _value_type = 'boolean'
 
