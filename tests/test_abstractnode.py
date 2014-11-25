@@ -102,6 +102,14 @@ class BaseAbstractNodeTests(TestCase):
         self.assertEqual(o.get('extra', strict=False), 'baz')
         self.assertEqual(o.as_dict(), d)
 
+    def testList(self):
+        r1 = {'type': 'resource', 'value': 'foo'}
+        r2 = {'type': 'resource', 'value': 'bar'}
+        d = {'type': 'list', 'list': [r1, r2]}
+        o = AbstractNode.from_dict(d)
+        self.assertEqual(o.list, [Resource('foo'), Resource('bar')])
+        self.assertEqual(o.as_dict(), d)
+
     def testBoolean(self):
         d = {'type': 'resource', 'value': 'true', 'value-type': 'boolean'}
         o = AbstractNode.from_dict(d)

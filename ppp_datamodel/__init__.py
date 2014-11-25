@@ -5,5 +5,6 @@ from .triple import Triple
 from .missing import Missing
 from .resource import Resource
 from .sentence import Sentence
+from .list import List
 
-__all__ = ['AbstractNode', 'Triple', 'Missing', 'Resource', 'Sentence']
+__all__ = ['AbstractNode', 'Triple', 'Missing', 'Resource', 'Sentence', 'List']
