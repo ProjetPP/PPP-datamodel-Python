@@ -19,6 +19,7 @@ class ListOperator(AbstractNode):
     def _parse_attributes(self, attributes):
         L = attributes['list']
         L = [x if isinstance(x, list) else [x] for x in L]
+        L = [[AbstractNode.from_dict(x) for x in l] for l in L]
         attributes['list'] = L
         super(ListOperator, self)._parse_attributes(attributes)
 
