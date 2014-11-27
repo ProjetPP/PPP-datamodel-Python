@@ -9,7 +9,7 @@ class List(AbstractNode):
     """
     __slots__ = ()
     _type = 'list'
-    _possible_attributes = ('list')
+    _possible_attributes = ('list',)
 
     def _check_attributes(self, attributes):
         super(List, self)._check_attributes(attributes)
