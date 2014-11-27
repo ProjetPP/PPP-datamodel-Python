@@ -51,6 +51,8 @@ class BaseAbstractNodeTests(TestCase):
         self.assertIsInstance(AbstractNode.from_json(json.dumps(d)), Triple)
         self.assertEqual(d, json.loads(AbstractNode.from_dict(d).as_json()))
         self.assertEqual(d, json.loads(AbstractNode.from_json(json.dumps(d)).as_json()))
+        self.assertIsInstance(AbstractNode.from_json(json.dumps(d)).subject, Resource)
+        self.assertEqual(AbstractNode.from_json(json.dumps(d)).subject.value, 's')
 
     def testFromJsonMissing(self):
         d = {'type': 'triple',
