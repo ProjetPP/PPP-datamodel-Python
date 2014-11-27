@@ -16,3 +16,9 @@ class List(AbstractNode):
         if not isinstance(attributes['list'], list):
             raise TypeError('The “list” argument of the List constructor '
                             'should be a list, not %r' % attributes['list'])
+
+    def _parse_attributes(self, attributes):
+        L = attributes['list']
+        L = [AbstractNode.from_dict(x) for x in L]
+        attributes['list'] = L
+        super(List, self)._parse_attributes(attributes)
