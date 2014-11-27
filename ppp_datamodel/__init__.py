@@ -6,5 +6,4 @@ from .missing import Missing
 from .resource import Resource
 from .sentence import Sentence
 from .list import List
-
-__all__ = ['AbstractNode', 'Triple', 'Missing', 'Resource', 'Sentence', 'List']
+from .list_operators import Union, Intersection, And, Or, First, Last, Sort
