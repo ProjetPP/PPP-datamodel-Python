@@ -28,7 +28,6 @@ class ListOperator(AbstractNode):
                  for x in L]
         else:
             assert not any(isinstance(x, dict) for x in L)
-        print(repr(L))
         L = tuple(to_abstract_node(l) for l in L)
         attributes['list'] = L
         super(ListOperator, self)._parse_attributes(attributes)
