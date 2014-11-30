@@ -19,6 +19,10 @@ class List(AbstractNode):
 
     def _parse_attributes(self, attributes):
         L = attributes['list']
-        L = [AbstractNode.from_dict(x) for x in L]
+        L = [AbstractNode.from_dict(x) if isinstance(x, dict) else x
+             for x in L]
         attributes['list'] = L
         super(List, self)._parse_attributes(attributes)
+
+    def __hash__(self):
+        return hash(tuple(self.list))
