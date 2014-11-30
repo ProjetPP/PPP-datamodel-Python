@@ -1,6 +1,10 @@
 """Contains operators that work on lists."""
 
 from .abstractnode import register, AbstractNode
+from .list import List
+
+def to_abstract_node(x):
+    return x if isinstance(x, AbstractNode) else AbstractNode.from_dict(x)
 
 class ListOperator(AbstractNode):
     """Base class for list operators.
@@ -18,14 +22,29 @@ class ListOperator(AbstractNode):
 
     def _parse_attributes(self, attributes):
         L = attributes['list']
-        L = [x if isinstance(x, list) else [x] for x in L]
-        L = [[AbstractNode.from_dict(x) for x in l] for l in L]
+        assert hasattr(L, '__iter__') and not isinstance(L, AbstractNode)
+        if all(isinstance(x, dict) for x in L):
+            L = [{'type': 'list', 'list': [x]} if x['type'] != 'list' else x
+                 for x in L]
+        else:
+            assert not any(isinstance(x, dict) for x in L)
+        print(repr(L))
+        L = tuple(to_abstract_node(l) for l in L)
         attributes['list'] = L
         super(ListOperator, self)._parse_attributes(attributes)
+
+    def as_dict(self):
+        return {'type': self.type, 'list': [x.as_dict() for x in self.list]}
 
 class PredicateListOperator(ListOperator):
     __slots__ = ()
     _possible_attributes = ('list', 'predicate')
+
+    def to_dict(self):
+        d = super().as_dict()
+        d['predicate'] = self.predicate.as_dict()
+        return d
+
 
 
 @register

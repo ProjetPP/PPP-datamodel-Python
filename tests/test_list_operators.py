@@ -9,14 +9,14 @@ class ListOperatorTests(TestCase):
               "list": [{"type": "resource", "value": "George Washington"},
                        {"type": "resource", "value": "Theodore Roosevelt"}]}
         d2 = {"type": "union",
-              "list": [[{"type": "resource", "value": "George Washington"}],
-                       [{"type": "resource", "value": "Theodore Roosevelt"}]]}
+              "list": [{"type": "list", "list": [{"type": "resource", "value": "George Washington"}]},
+                       {"type": "list", "list": [{"type": "resource", "value": "Theodore Roosevelt"}]}]}
         o1 = AbstractNode.from_dict(d1)
         o2 = AbstractNode.from_dict(d2)
         self.assertEqual(o1, o2)
         self.assertEqual(o1.as_dict(), d2)
         self.assertEqual(o2.as_dict(), d2)
-        self.assertEqual(o1.list[0], [Resource('George Washington')])
+        self.assertEqual(o1.list[0], List([Resource('George Washington')]))
 
     def testHash(self):
         o1 = List([Resource('foo'), Resource('bar')])
@@ -26,3 +26,4 @@ class ListOperatorTests(TestCase):
         self.assertEqual(h1, h2)
         o1.list.append(Resource('baz'))
         self.assertNotEqual(hash(o1), h2)
+        hash(Union([o1, o2]))
