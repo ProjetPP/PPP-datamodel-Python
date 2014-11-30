@@ -26,3 +26,6 @@ class List(AbstractNode):
 
     def __hash__(self):
         return hash(tuple(self.list))
+
+    def as_dict(self):
+        return {'type': self.type, 'list': [x.as_dict() for x in self.list]}

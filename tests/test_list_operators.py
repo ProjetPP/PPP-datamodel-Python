@@ -17,6 +17,7 @@ class ListOperatorTests(TestCase):
         self.assertEqual(o1.as_dict(), d2)
         self.assertEqual(o2.as_dict(), d2)
         self.assertEqual(o1.list[0], List([Resource('George Washington')]))
+        o1.as_json()
 
     def testHash(self):
         o1 = List([Resource('foo'), Resource('bar')])
@@ -27,3 +28,4 @@ class ListOperatorTests(TestCase):
         o1.list.append(Resource('baz'))
         self.assertNotEqual(hash(o1), h2)
         hash(Union([o1, o2]))
+        o1.as_json()
