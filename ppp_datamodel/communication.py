@@ -16,7 +16,8 @@ class Request:
         self.tree = tree
         self.language = language
         self.measures = measures
-        self.trace = trace
+        self.trace = [x if isinstance(x, TraceItem) else TraceItem.from_dict(x)
+                      for x in trace]
 
     def __repr__(self):
         return '<ppp_datamodel.Request(%s)>' % \
