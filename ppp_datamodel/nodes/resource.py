@@ -1,6 +1,6 @@
 """Contains the class representing a resource leaf."""
 
-from .log import logger
+from ..log import logger
 from .abstractnode import register, AbstractNode
 
 EXTRA_ATTRIBUTES = {
