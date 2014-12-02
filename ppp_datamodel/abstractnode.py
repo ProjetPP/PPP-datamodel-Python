@@ -1,8 +1,8 @@
 """Contains the base class for PPP nodes."""
 
 import json
-import logging
 
+from .log import logger
 from . import exceptions
 
 TYPE_TO_CLASS = {}
@@ -35,7 +35,7 @@ class AbstractNode:
             assert attributes.pop('type') == self.type
         unknown_keys = set(attributes) - set(self._possible_attributes) - set(extra)
         if unknown_keys:
-            logging.warning('%s node got unknown attributes: %s' %
+            logger.warning('%s node got unknown attributes: %s' %
                             (self._type, unknown_keys))
 
     def _parse_attributes(self, attributes):

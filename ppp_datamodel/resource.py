@@ -1,6 +1,6 @@
 """Contains the class representing a resource leaf."""
 
-import logging
+from .log import logger
 from .abstractnode import register, AbstractNode
 
 EXTRA_ATTRIBUTES = {
@@ -30,7 +30,7 @@ class Resource(AbstractNode):
     def _select_class(cls, data):
         type_ = data.get('value_type', 'string')
         if type_ not in VALUE_TYPE_TO_CLASS:
-            logging.warning('Unknown value-type: %s' % type_)
+            logger.warning('Unknown value-type: %s' % type_)
             type_ = 'string'
         return VALUE_TYPE_TO_CLASS[type_]
 
