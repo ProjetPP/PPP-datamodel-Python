@@ -19,3 +19,33 @@ class TripleParserTestCase(TestCase):
                         ),
                     Missing()
                 )])
+    def testList(self):
+        self.assertEqual(parse_triples('[]'), [List([])])
+        self.assertEqual(parse_triples('[foo]'), [List([Resource('foo')])])
+        self.assertEqual(parse_triples('[(?,?,?)]'), [List([
+                Triple(
+                    Missing(),
+                    Missing(),
+                    Missing(),
+                    )
+                ])])
+        self.assertEqual(parse_triples('(foo, [bar, (?, ?, baz)], (?, bar, [qux]))'), [
+                Triple(
+                    Resource('foo'),
+                    List([
+                        Resource('bar'),
+                        Triple(
+                            Missing(),
+                            Missing(),
+                            Resource('baz'),
+                            ),
+                        ]),
+                    Triple(
+                        Missing(),
+                        Resource('bar'),
+                        List([
+                            Resource('qux')
+                        ]),
+                    ),
+                )])
+
