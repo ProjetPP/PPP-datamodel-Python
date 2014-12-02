@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from ppp_datamodel import Triple, Resource, Missing
-from ppp_datamodel.triple_parser import parse_triples
+from ppp_datamodel import Triple, Resource, Missing, List
+from ppp_datamodel.parsers import parse_triples
 
 class TripleParserTestCase(TestCase):
     def testBasics(self):
