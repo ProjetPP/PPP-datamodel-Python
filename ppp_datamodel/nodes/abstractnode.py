@@ -2,8 +2,8 @@
 
 import json
 
-from .log import logger
-from . import exceptions
+from ..log import logger
+from .. import exceptions
 
 TYPE_TO_CLASS = {}
 def register(cls):

@@ -1,6 +1,4 @@
-from .triple import Triple
-from .resource import Resource
-from .missing import Missing
+from .nodes import Triple, Resource, Missing
 
 class ParseError(Exception):
     pass
