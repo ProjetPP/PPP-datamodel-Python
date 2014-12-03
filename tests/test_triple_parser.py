@@ -1,10 +1,16 @@
 from unittest import TestCase
 
 from ppp_datamodel import Triple, Resource, Missing, List, Or, And
-from ppp_datamodel.parsers import parse_triples
+from ppp_datamodel.parsers import parse_triples, parser
 
 class TripleParserTestCase(TestCase):
     def testBasics(self):
+        self.assertEqual(parse_triples('?'), Missing())
+        self.assertEqual(parse_triples('(?,?,?)'),
+                Triple(Missing(), Missing(), Missing()))
+        self.assertEqual(parse_triples('(?, ?, ?)'),
+                Triple(Missing(), Missing(), Missing()))
+    def testTriples(self):
         self.assertEqual(parse_triples('(foo, (bar, ?, (?, qux, quux)), ?)'),
                 Triple(
                     Resource('foo'),
@@ -21,8 +27,18 @@ class TripleParserTestCase(TestCase):
                 ))
     def testList(self):
         self.assertEqual(parse_triples('[]'), List([]))
-        self.assertEqual(parse_triples('[foo]'), List([Resource('foo')]))
-        self.assertEqual(parse_triples('[(?,?,?)]'), List([
+        self.assertEqual(parse_triples('[foo]'), Resource('foo'))
+        self.assertEqual(parse_triples('[foo, bar]'),
+                List([Resource('foo'), Resource('bar')]))
+        self.assertEqual(parse_triples('[(?,?,?)]'),
+                Triple(
+                    Missing(),
+                    Missing(),
+                    Missing(),
+                    )
+                )
+        self.assertEqual(parse_triples('[foo, (?,?,?)]'), List([
+                Resource('foo'),
                 Triple(
                     Missing(),
                     Missing(),
@@ -43,9 +59,7 @@ class TripleParserTestCase(TestCase):
                     Triple(
                         Missing(),
                         Resource('bar'),
-                        List([
-                            Resource('qux')
-                        ]),
+                        Resource('qux'),
                     ),
                 ))
 
@@ -54,8 +68,8 @@ class TripleParserTestCase(TestCase):
                 Resource('foo'),
                 Resource('bar'),
                 ])
-        self.assertEqual(parse_triples('foo /\ bar'), t1)
-        self.assertEqual(parse_triples('(foo /\ bar)'), t1)
+        self.assertEqual(parse_triples(r'foo /\ bar'), t1)
+        self.assertEqual(parse_triples(r'(foo /\ bar)'), t1)
         t2 = Or([
                 Triple(
                     Resource('foo'),

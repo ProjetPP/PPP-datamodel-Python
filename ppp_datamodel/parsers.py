@@ -1,5 +1,6 @@
 """Contains a parser for the “human-writable” notation of the datamodel."""
 
+from ply import lex, yacc
 import collections
 
 from .nodes import List, Triple, Missing, Resource, Or, And, Intersection, Union
@@ -9,100 +10,105 @@ __all__ = ['ParseError', 'parse_triples']
 class ParseError(Exception):
     pass
 
-OPERATORS = ('[', ']', '(', ')', ',', '/\\', r'\\/')
-def lex_triples(sentence):
-    buff = ''
-    for char in sentence:
-        buff += char
-        operators = list(filter(buff.endswith, OPERATORS))
-        if operators:
-            assert len(operators) == 1, operators
-            op = operators[0]
-            last_token = buff[0:-len(op)]
-            if last_token.strip():
-                yield last_token.strip()
-            buff = ''
-            yield op
-    if buff.strip():
-        yield buff.strip()
+tokens = tuple(('RESOURCE MISSING L_PAREN R_PAREN L_BRACK R_BRACK COMMA '
+                'AND OR').split(' '))
+t_L_PAREN = r'\('
+t_R_PAREN = r'\)'
+t_L_BRACK = r'\['
+t_R_BRACK = r'\]'
+t_COMMA = r','
+t_AND = r'/\\'
+t_OR = r'\\/'
+def t_MISSING(t):
+    r'\?'
+    t.value = Missing()
+    return t
+def t_RESOURCE(t):
+    r'([^()\[\]?,\\/]+|"([^"\\]|\\.)*")'
+    # TODO: remove / from the regexp
+    t.value = Resource(t.value.strip())
+    return t
+#forbidden = '|'.join((
+#    r'\/', r'/\\', '\(', '\)', '\[', '\]', r'(?<!\\)"'))
+#t_RESOURCE.__doc__ = '(?!(%s)*)' % (forbidden,)
 
-stackitem = collections.namedtuple('stackitem', 'type tree')
-TYPES = {
-        '(': 'paren', ')': 'paren',
-        '[': 'brack', ']': 'brack',
-        }
-OPEN = '(['
-CLOSE = ')]'
-def parse_forest(tokens):
-    forest = []
-    stack = [stackitem('root', forest)]
-    for token in tokens:
-        type_ = TYPES.get(token, None)
-        if token in OPEN:
-            stack.append(stackitem(type_, []))
-            stack[-2].tree.append(stack[-1])
-        elif token in CLOSE:
-            if stack[-1].type == 'root':
-                raise ParseError('Stack is empty')
-            elif stack[-1].type != type_:
-                raise ParseError('Overlapping parenthesing')
-            stack.pop(-1)
-        elif token == ',':
-            pass
-        elif token in ('\\/', '/\\'):
-            stack[-1].tree.append(stackitem('operator', token))
-        else:
-            stack[-1].tree.append(stackitem('resource', token))
-    if stack[-1].type != 'root':
-        raise ParseError('Stack is not empty')
-    return forest
+t_ignore = ' '
+
+def t_error(t):
+    raise ParseError('Illegal string `%s`' % t.value)
+
+lex.lex()
 
 
-OPERATOR_TO_CLASS = {
-        '\\/': Or, '∨': Or,
-        '/\\': And, '∧': And,
-        '∪': Union,
-        '∩': Intersection,
-        }
-def make_operators(lists):
-    operators = lists[1::][::2] # Odd
-    items = lists[::2] # Even
-    if len(lists) % 2 != 1 or \
-            any(x.tree not in OPERATOR_TO_CLASS for x in operators):
-        raise ParseError('Juxtaposition of items.')
-    op = operators[0]
-    if any(x != op for x in operators):
-        raise ParseError('All operators at same level should be the same.')
-    cls = OPERATOR_TO_CLASS[op.tree]
-    return cls(list(map(make_triples, items)))
-def make_triples(lists):
-    if not isinstance(lists, stackitem):
-        assert isinstance(lists, list), lists
-        if len(lists) == 1:
-            # This is “priority parenthesing”
-            return make_triples(lists[0])
-        else:
-            return make_operators(lists)
-    elif lists.type == 'resource':
-        if lists.tree == '?':
-            return Missing()
-        else:
-            return Resource(value=lists.tree)
-    elif lists.type == 'paren':
-        if len(lists.tree) == 1:
-            return make_triples(lists.tree[0])
-        elif len(lists.tree) == 3 and \
-                all(x.type != 'operator' for x in lists.tree):
-            return Triple(*map(make_triples, lists.tree))
-        else:
-            return make_triples(lists.tree)
-    elif lists.type == 'brack':
-        return List(list(map(make_triples, lists.tree)))
+def p_triple(t):
+    """triple : L_PAREN expression COMMA expression COMMA expression R_PAREN"""
+    t[0] = Triple(t[2], t[4], t[6])
+
+def p_list_body_singleton(t):
+    """list_body : expression"""
+    t[0] = [t[1]]
+
+def p_list_body_comma(t):
+    """list_body : list_body COMMA expression"""
+    t[0] = t[1]
+    t[0].append(t[3])
+
+def p_list(t):
+    """list : L_BRACK list_body R_BRACK"""
+    t[0] = List(t[2])
+
+def p_list_empty(t):
+    """list : L_BRACK R_BRACK"""
+    t[0] = List([])
+
+def p_conjonction_base(t):
+    """conjonction_base : RESOURCE
+                        | MISSING
+                        | triple
+                        | list"""
+    t[0] = t[1]
+def p_conjonction_expr(t):
+    """conjonction : L_PAREN expression R_PAREN"""
+    t[0] = [t[2]]
+def p_conjonction_empty(t):
+    """conjonction : conjonction_base"""
+    t[0] = [t[1]]
+def p_conjonction(t):
+    """conjonction : conjonction AND conjonction_base"""
+    t[0] = t[1]
+    t[0].append(t[3])
+
+def p_disjonction_empty(t):
+    """disjonction : conjonction"""
+    assert isinstance(t[1], list), t[1]
+    t[0] = [And(t[1])]
+def p_disjonction(t):
+    """disjonction : disjonction OR conjonction"""
+    t[0] = t[1]
+    t[0].append(And(t[3]))
+
+def p_expression(t):
+    """expression : disjonction"""
+    assert isinstance(t[1], list)
+    t[0] = Or(t[1])
+
+
+def p_error(t):
+    raise ParseError("Syntax error at '%s'" % t.value)
+
+parser = yacc.yacc(start='expression')
+
+def normalize(tree):
+    if isinstance(tree, (List, Or, And)) and len(tree.list) == 1:
+        return normalize(tree.list[0])
+    elif isinstance(tree, (List, Or, And)):
+        return tree.__class__(list(map(normalize, tree.list)))
+    elif isinstance(tree, Triple):
+        return Triple(normalize(tree.subject),
+                      normalize(tree.predicate),
+                      normalize(tree.object))
     else:
-        assert False, lists
-
-
+        return tree
 
 def parse_triples(sentence):
-    return make_triples(parse_forest(lex_triples(sentence)))
-
+    return normalize(parser.parse(sentence))
