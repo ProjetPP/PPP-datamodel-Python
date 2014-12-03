@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ppp_datamodel',
-    version='0.5.12',
+    version='0.5.13',
     description='Data model for the Projet Pensées Profondes.',
     url='https://github.com/ProjetPP/PPP-datamodel-Python',
     author='Valentin Lorentz',
@@ -25,6 +25,8 @@ setup(
     ],
     packages=[
         'ppp_datamodel',
+        'ppp_datamodel.nodes',
+        'ppp_datamodel.communication',
     ],
 )
 
