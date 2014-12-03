@@ -62,6 +62,7 @@ class StringResource(Resource):
 @register_valuetype
 class MathLatexResource(Resource):
     _value_type = 'math-latex'
+    _possible_attributes = Resource._possible_attributes + ('latex',)
 
 @register_valuetype
 class BooleanResource(Resource):
