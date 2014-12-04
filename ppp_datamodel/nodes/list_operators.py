@@ -33,16 +33,13 @@ class ListOperator(AbstractNode):
         super(ListOperator, self)._parse_attributes(attributes)
 
     def as_dict(self):
-        return {'type': self.type, 'list': [x.as_dict() for x in self.list]}
+        d = super().as_dict()
+        d['list'] = [x.as_dict() for x in self.list]
+        return d
 
 class PredicateListOperator(ListOperator):
     __slots__ = ()
     _possible_attributes = ('list', 'predicate')
-
-    def as_dict(self):
-        d = super().as_dict()
-        d['predicate'] = self.predicate.as_dict()
-        return d
 
 
 
