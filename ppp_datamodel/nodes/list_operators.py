@@ -39,7 +39,7 @@ class PredicateListOperator(ListOperator):
     __slots__ = ()
     _possible_attributes = ('list', 'predicate')
 
-    def to_dict(self):
+    def as_dict(self):
         d = super().as_dict()
         d['predicate'] = self.predicate.as_dict()
         return d
