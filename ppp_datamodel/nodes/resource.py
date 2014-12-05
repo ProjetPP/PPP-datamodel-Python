@@ -3,6 +3,9 @@
 from ..log import logger
 from .abstractnode import register, AbstractNode
 
+__all__ = ['Resource', 'StringResource', 'MathLatexResource',
+           'BooleanResource', 'TimeResource', 'GeojsonResource']
+
 EXTRA_ATTRIBUTES = {
         'string': ('language',),
         'boolean': (),
@@ -28,7 +31,7 @@ class Resource(AbstractNode):
 
     @classmethod
     def _select_class(cls, data):
-        type_ = data.get('value_type', 'string')
+        type_ = data.get('value-type', 'string')
         if type_ not in VALUE_TYPE_TO_CLASS:
             logger.warning('Unknown value-type: %s' % type_)
             type_ = 'string'
@@ -96,3 +99,14 @@ class TimeResource(Resource):
     def _format_value(value):
         return value
 
+@register_valuetype
+class GeojsonResource(Resource):
+    _value_type = 'geo-json'
+    _possible_attributes = Resource._possible_attributes + ('geojson',)
+
+    @classmethod
+    def deserialize_attribute(cls, key, value):
+        if key == 'geojson':
+            return value
+        else:
+            super().deserialize_attribute(key, value)

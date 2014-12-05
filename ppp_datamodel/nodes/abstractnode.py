@@ -116,15 +116,21 @@ class AbstractNode:
     def from_dict(cls, data):
         cls._test_can_import_json(data)
 
-        # Create node instances
-        conv = lambda v: cls.from_dict(v) if isinstance(v, dict) else v
-        data = {k.replace('-', '_'): conv(v) for (k, v) in data.items()}
+        # Find a class that will deserialize the dict as specifically
+        # as possible
         while True:
             cls2 = cls._select_class(data)
             if cls is cls2:
                 break
             cls = cls2
+        conv = (lambda k,v: cls.deserialize_attribute(k, v)
+                            if isinstance(v, dict) else v)
+        data = {k.replace('-', '_'): conv(k,v) for (k, v) in data.items()}
         return cls(**data)
+
+    @classmethod
+    def deserialize_attribute(cls, key, value):
+        return AbstractNode.from_dict(value)
 
     @classmethod
     def _select_class(cls, data):
