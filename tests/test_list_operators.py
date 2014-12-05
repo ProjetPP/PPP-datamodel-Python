@@ -4,6 +4,15 @@ from ppp_datamodel import Union
 from unittest import TestCase
 
 class ListOperatorTests(TestCase):
+    def testIsListNode(self):
+        d1 = {"type": "sort", "predicate": Resource("foo"),
+              "list": [{"type": "resource", "value": "George Washington"},
+                       {"type": "resource", "value": "Theodore Roosevelt"}]}
+        self.assertRaises(TypeError, AbstractNode.from_dict, d1)
+        d2 = {"type": "union",
+              "list": [{"type": "resource", "value": "George Washington"},
+                       {"type": "resource", "value": "Theodore Roosevelt"}]}
+        AbstractNode.from_dict(d2)
     def testUnion(self):
         d1 = {"type": "union",
               "list": [{"type": "resource", "value": "George Washington"},

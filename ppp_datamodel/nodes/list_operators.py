@@ -6,6 +6,20 @@ from .list import List
 def to_abstract_node(x):
     return x if isinstance(x, AbstractNode) else AbstractNode.from_dict(x)
 
+class ListNodeOperator(AbstractNode):
+    """Base class for list operators.
+    https://github.com/ProjetPP/Documentation/blob/master/data-model.md#union-intersection-and-or-first-and-last
+    """
+    __slots__ = ()
+    _possible_attributes = ('list',)
+
+    def _check_attributes(self, attributes):
+        super(ListOperator, self)._check_attributes(attributes)
+        if not isinstance(attributes['list'], List):
+            raise TypeError('The “list” argument of the %s constructor '
+                            'should be a List node, not %r' %
+                            (self.__class__.__name__, attributes['list']))
+
 class ListOperator(AbstractNode):
     """Base class for list operators.
     https://github.com/ProjetPP/Documentation/blob/master/data-model.md#union-intersection-and-or-first-and-last
@@ -17,7 +31,7 @@ class ListOperator(AbstractNode):
         super(ListOperator, self)._check_attributes(attributes)
         if not isinstance(attributes['list'], list):
             raise TypeError('The “list” argument of the %s constructor '
-                            'should be a list, not %r' %
+                            'should be an iterable, not %r' %
                             (self.__class__.__name__, attributes['list']))
 
     def _parse_attributes(self, attributes):
@@ -37,7 +51,7 @@ class ListOperator(AbstractNode):
         d['list'] = [x.as_dict() for x in self.list]
         return d
 
-class PredicateListOperator(ListOperator):
+class PredicateListOperator(ListNodeOperator):
     __slots__ = ()
     _possible_attributes = ('list', 'predicate')
 
@@ -52,7 +66,7 @@ class Intersection(ListOperator):
     __slots__ = ()
     _type = 'intersection'
 @register
-class And(ListOperator):
+class And(ListNodeOperator):
     __slots__ = ()
     _type = 'and'
 @register
@@ -60,11 +74,11 @@ class Or(ListOperator):
     __slots__ = ()
     _type = 'or'
 @register
-class First(ListOperator):
+class First(ListNodeOperator):
     __slots__ = ()
     _type = 'first'
 @register
-class Last(ListOperator):
+class Last(ListNodeOperator):
     __slots__ = ()
     _type = 'last'
 
