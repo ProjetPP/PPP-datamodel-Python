@@ -49,9 +49,10 @@ class Resource(AbstractNode):
 
     def as_dict(self):
         d = super().as_dict()
-        type_ = d.get('value-type', 'string')
+        type_ = d.get('value-type', self._value_type)
         value = d.get('value')
         d['value'] = self._format_value(value)
+        d['value-type'] = type_
         return d
 
 @register_valuetype
