@@ -39,3 +39,4 @@ class ResourceTests(TestCase):
             }
         o = AbstractNode.from_dict(d)
         self.assertEqual(o.geojson['type'], 'Feature')
+        hash(o)

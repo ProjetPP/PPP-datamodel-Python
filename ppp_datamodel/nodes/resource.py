@@ -99,6 +99,14 @@ class TimeResource(Resource):
     def _format_value(value):
         return value
 
+def freeze_dicts(d):
+    if isinstance(d, dict):
+        return frozenset(map(lambda x:(x[0], freeze_dicts(x[1])), d.items()))
+    elif isinstance(d, list):
+        return tuple(map(freeze_dicts, d))
+    else:
+        return d
+
 @register_valuetype
 class GeojsonResource(Resource):
     _value_type = 'geo-json'
@@ -110,3 +118,6 @@ class GeojsonResource(Resource):
             return value
         else:
             super().deserialize_attribute(key, value)
+
+    def __hash__(self):
+        return hash(freeze_dicts(self._attributes))
