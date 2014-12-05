@@ -52,7 +52,8 @@ class Resource(AbstractNode):
         type_ = d.get('value-type', self._value_type)
         value = d.get('value')
         d['value'] = self._format_value(value)
-        d['value-type'] = type_
+        if type_ not in ('string', 'unknown') or 'value-type' in d:
+            d['value-type'] = type_
         return d
 
 @register_valuetype
