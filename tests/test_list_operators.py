@@ -5,7 +5,7 @@ from unittest import TestCase
 
 class ListOperatorTests(TestCase):
     def testIsListNode(self):
-        d1 = {"type": "sort", "predicate": Resource("foo"),
+        d1 = {"type": "sort", "predicate": {"type": "resource", "value": "foo"},
               "list": [{"type": "resource", "value": "George Washington"},
                        {"type": "resource", "value": "Theodore Roosevelt"}]}
         self.assertRaises(TypeError, AbstractNode.from_dict, d1)
