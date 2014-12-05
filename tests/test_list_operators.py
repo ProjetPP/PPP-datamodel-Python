@@ -1,5 +1,5 @@
 from ppp_datamodel import AbstractNode, Resource, List
-from ppp_datamodel import Union
+from ppp_datamodel import Union, First
 
 from unittest import TestCase
 
@@ -38,3 +38,6 @@ class ListOperatorTests(TestCase):
         self.assertNotEqual(hash(o1), h2)
         hash(Union([o1, o2]))
         o1.as_json()
+
+    def testFirst(self):
+        First(List([Resource('foo'), Resource('bar')]))

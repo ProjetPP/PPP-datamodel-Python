@@ -14,7 +14,7 @@ class ListNodeOperator(AbstractNode):
     _possible_attributes = ('list',)
 
     def _check_attributes(self, attributes):
-        super(ListOperator, self)._check_attributes(attributes)
+        super(ListNodeOperator, self)._check_attributes(attributes)
         if not isinstance(attributes['list'], List):
             raise TypeError('The “list” argument of the %s constructor '
                             'should be a List node, not %r' %
