@@ -4,7 +4,7 @@ from ppp_datamodel import Union, First
 from unittest import TestCase
 
 class ListOperatorTests(TestCase):
-    def testIsListNode(self):
+    def testListNodesType(self):
         d1 = {"type": "sort", "predicate": {"type": "resource", "value": "foo"},
               "list": [{"type": "resource", "value": "George Washington"},
                        {"type": "resource", "value": "Theodore Roosevelt"}]}
@@ -13,6 +13,9 @@ class ListOperatorTests(TestCase):
               "list": [{"type": "resource", "value": "George Washington"},
                        {"type": "resource", "value": "Theodore Roosevelt"}]}
         AbstractNode.from_dict(d2)
+        d3 = {"type": "sort", "predicate": {"type": "resource", "value": "foo"},
+              "list": {"type": "resource", "value": "George Washington"}}
+        AbstractNode.from_dict(d3)
     def testUnion(self):
         d1 = {"type": "union",
               "list": [{"type": "resource", "value": "George Washington"},
