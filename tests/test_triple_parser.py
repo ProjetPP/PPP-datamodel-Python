@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from ppp_datamodel import Triple, Resource, Missing, List, Or, And
+from ppp_datamodel import Triple, Resource, Missing, List, Or, And, Union, Intersection
 from ppp_datamodel.parsers import parse_triples, parser
 
 class TripleParserTestCase(TestCase):
@@ -84,4 +84,18 @@ class TripleParserTestCase(TestCase):
                 ])
         self.assertEqual(parse_triples('(foo, ?, ?) \/ (?, bar, ?)'), t2)
         self.assertEqual(parse_triples('((foo, ?, ?) \/ (?, bar, ?))'), t2)
+
+    def testUnion(self):
+        t = Union([
+            Triple(Resource('foo'), Resource('bar'), Missing()),
+            Triple(Missing(), Resource('baz'), Resource('qux')),
+            ])
+        self.assertEqual(parse_triples(r'(foo, bar, ?) ∪ (?, baz, qux)'), t)
+
+    def testIntersection(self):
+        t = Intersection([
+            Triple(Resource('foo'), Resource('bar'), Missing()),
+            Triple(Missing(), Resource('baz'), Resource('qux')),
+            ])
+        self.assertEqual(parse_triples(r'(foo, bar, ?) ∩ (?, baz, qux)'), t)
 

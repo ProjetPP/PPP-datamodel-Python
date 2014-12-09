@@ -11,7 +11,7 @@ class ParseError(Exception):
     pass
 
 tokens = tuple(('RESOURCE MISSING L_PAREN R_PAREN L_BRACK R_BRACK COMMA '
-                'AND OR').split(' '))
+                'AND OR UNION INTERSECTION').split(' '))
 t_L_PAREN = r'\('
 t_R_PAREN = r'\)'
 t_L_BRACK = r'\['
@@ -19,12 +19,14 @@ t_R_BRACK = r'\]'
 t_COMMA = r','
 t_AND = r'/\\'
 t_OR = r'\\/'
+t_UNION = r'∪'
+t_INTERSECTION = r'∩'
 def t_MISSING(t):
     r'\?'
     t.value = Missing()
     return t
 def t_RESOURCE(t):
-    r'([^()\[\]?,\\/]+|"([^"\\]|\\.)*")'
+    r'([^()\[\]?,\\/∪∩]+|"([^"\\]|\\.)*")'
     # TODO: remove / from the regexp
     t.value = Resource(t.value.strip())
     return t
@@ -78,14 +80,34 @@ def p_conjonction(t):
     t[0] = t[1]
     t[0].append(t[3])
 
-def p_disjonction_empty(t):
-    """disjonction : conjonction"""
+
+def p_intersection_empty(t):
+    """intersection : conjonction"""
     assert isinstance(t[1], list), t[1]
     t[0] = [And(t[1])]
-def p_disjonction(t):
-    """disjonction : disjonction OR conjonction"""
+def p_intersection(t):
+    """intersection : intersection INTERSECTION conjonction"""
     t[0] = t[1]
     t[0].append(And(t[3]))
+
+def p_union_empty(t):
+    """union : intersection"""
+    assert isinstance(t[1], list), t[1]
+    t[0] = [Intersection(t[1])]
+def p_union(t):
+    """union : union UNION intersection"""
+    t[0] = t[1]
+    t[0].append(Intersection(t[3]))
+
+
+def p_disjonction_empty(t):
+    """disjonction : union"""
+    assert isinstance(t[1], list), t[1]
+    t[0] = [Union(t[1])]
+def p_disjonction(t):
+    """disjonction : disjonction OR union"""
+    t[0] = t[1]
+    t[0].append(Union(t[3]))
 
 def p_expression(t):
     """expression : disjonction"""
@@ -99,9 +121,10 @@ def p_error(t):
 parser = yacc.yacc(start='expression')
 
 def normalize(tree):
-    if isinstance(tree, (List, Or, And)) and len(tree.list) == 1:
+    if isinstance(tree, (List, Or, And, Union, Intersection)) and \
+            len(tree.list) == 1:
         return normalize(tree.list[0])
-    elif isinstance(tree, (List, Or, And)):
+    elif isinstance(tree, (List, Or, And, Union, Intersection)):
         return tree.__class__(list(map(normalize, tree.list)))
     elif isinstance(tree, Triple):
         return Triple(normalize(tree.subject),
