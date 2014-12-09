@@ -25,6 +25,19 @@ class TripleParserTestCase(TestCase):
                         ),
                     Missing()
                 ))
+    def testQuotes(self):
+        self.assertEqual(parse_triples('("foo bar", baz, ?)'),
+                Triple(Resource('foo bar'), Resource('baz'), Missing()))
+        self.assertEqual(parse_triples('(“foo bar”, baz, ?)'),
+                Triple(Resource('foo bar'), Resource('baz'), Missing()))
+        self.assertEqual(parse_triples('(“foo " bar”, baz, ?)'),
+                Triple(Resource('foo " bar'), Resource('baz'), Missing()))
+        self.assertEqual(parse_triples('("foo \\" bar", baz, ?)'),
+                Triple(Resource('foo " bar'), Resource('baz'), Missing()))
+        self.assertEqual(parse_triples('("foo \\" bar", baz, ?)'),
+                Triple(Resource('foo " bar'), Resource('baz'), Missing()))
+        self.assertEqual(parse_triples('("caf\\xe9", baz, ?)'),
+                Triple(Resource('café'), Resource('baz'), Missing()))
     def testList(self):
         self.assertEqual(parse_triples('[]'), List([]))
         self.assertEqual(parse_triples('[foo]'), Resource('foo'))
