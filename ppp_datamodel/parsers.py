@@ -1,7 +1,7 @@
 """Contains a parser for the “human-writable” notation of the datamodel."""
 
+import ast
 from ply import lex, yacc
-import collections
 
 from .nodes import List, Triple, Missing, Resource, Or, And, Intersection, Union
 
@@ -26,8 +26,12 @@ def t_MISSING(t):
     t.value = Missing()
     return t
 def t_RESOURCE(t):
-    r'([^()\[\]?,\\/∪∩]+|"([^"\\]|\\.)*")'
+    r'([^()\[\]?,\\/∪∩"“”]+|"([^"\\]|\\.)*"|“([^“”\\]|\\.)*”)'
     # TODO: remove / from the regexp
+    if t.value.startswith('“') and t.value.endswith('”'):
+        t.value = '"%s"' % t.value[1:-1].replace('"', '\\"')
+    if t.value.startswith('"') and t.value.endswith('"'):
+        t.value = ast.literal_eval(t.value) # Handle escape characters.
     t.value = Resource(t.value.strip())
     return t
 #forbidden = '|'.join((
