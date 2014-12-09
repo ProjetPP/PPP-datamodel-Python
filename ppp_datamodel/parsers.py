@@ -1,51 +1,137 @@
-from .nodes import Triple, Resource, Missing
+"""Contains a parser for the “human-writable” notation of the datamodel."""
+
+from ply import lex, yacc
+import collections
+
+from .nodes import List, Triple, Missing, Resource, Or, And, Intersection, Union
+
+__all__ = ['ParseError', 'parse_triples']
 
 class ParseError(Exception):
     pass
 
-def lex_triples(sentence):
-    token = ''
-    for char in sentence:
-        if char in '(),':
-            if token.strip():
-                yield token.strip()
-                token = ''
-            yield char
-        else:
-            token += char
-def parse_forest(tokens):
-    forest = []
-    stack = [forest]
-    for token in tokens:
-        if token == '(':
-            stack.append([])
-            stack[-2].append(stack[-1])
-        elif token == ')':
-            if len(stack) == 1:
-                raise ParseError('Stack is empty')
-            stack.pop(-1)
-        elif token == ',':
-            pass
-        else:
-            stack[-1].append(token)
-    if len(stack) > 1:
-        raise ParseError('Stack is not empty')
-    return forest
-def make_triples(lists):
-    if isinstance(lists, str):
-        if lists[0] == '?':
-            return Missing()
-        else:
-            return Resource(value=lists)
+tokens = tuple(('RESOURCE MISSING L_PAREN R_PAREN L_BRACK R_BRACK COMMA '
+                'AND OR UNION INTERSECTION').split(' '))
+t_L_PAREN = r'\('
+t_R_PAREN = r'\)'
+t_L_BRACK = r'\['
+t_R_BRACK = r'\]'
+t_COMMA = r','
+t_AND = r'/\\'
+t_OR = r'\\/'
+t_UNION = r'∪'
+t_INTERSECTION = r'∩'
+def t_MISSING(t):
+    r'\?'
+    t.value = Missing()
+    return t
+def t_RESOURCE(t):
+    r'([^()\[\]?,\\/∪∩]+|"([^"\\]|\\.)*")'
+    # TODO: remove / from the regexp
+    t.value = Resource(t.value.strip())
+    return t
+#forbidden = '|'.join((
+#    r'\/', r'/\\', '\(', '\)', '\[', '\]', r'(?<!\\)"'))
+#t_RESOURCE.__doc__ = '(?!(%s)*)' % (forbidden,)
+
+t_ignore = ' '
+
+def t_error(t):
+    raise ParseError('Illegal string `%s`' % t.value)
+
+lex.lex()
+
+
+def p_triple(t):
+    """triple : L_PAREN expression COMMA expression COMMA expression R_PAREN"""
+    t[0] = Triple(t[2], t[4], t[6])
+
+def p_list_body_singleton(t):
+    """list_body : expression"""
+    t[0] = [t[1]]
+
+def p_list_body_comma(t):
+    """list_body : list_body COMMA expression"""
+    t[0] = t[1]
+    t[0].append(t[3])
+
+def p_list(t):
+    """list : L_BRACK list_body R_BRACK"""
+    t[0] = List(t[2])
+
+def p_list_empty(t):
+    """list : L_BRACK R_BRACK"""
+    t[0] = List([])
+
+def p_conjonction_base(t):
+    """conjonction_base : RESOURCE
+                        | MISSING
+                        | triple
+                        | list"""
+    t[0] = t[1]
+def p_conjonction_expr(t):
+    """conjonction : L_PAREN expression R_PAREN"""
+    t[0] = [t[2]]
+def p_conjonction_empty(t):
+    """conjonction : conjonction_base"""
+    t[0] = [t[1]]
+def p_conjonction(t):
+    """conjonction : conjonction AND conjonction_base"""
+    t[0] = t[1]
+    t[0].append(t[3])
+
+
+def p_intersection_empty(t):
+    """intersection : conjonction"""
+    assert isinstance(t[1], list), t[1]
+    t[0] = [And(t[1])]
+def p_intersection(t):
+    """intersection : intersection INTERSECTION conjonction"""
+    t[0] = t[1]
+    t[0].append(And(t[3]))
+
+def p_union_empty(t):
+    """union : intersection"""
+    assert isinstance(t[1], list), t[1]
+    t[0] = [Intersection(t[1])]
+def p_union(t):
+    """union : union UNION intersection"""
+    t[0] = t[1]
+    t[0].append(Intersection(t[3]))
+
+
+def p_disjonction_empty(t):
+    """disjonction : union"""
+    assert isinstance(t[1], list), t[1]
+    t[0] = [Union(t[1])]
+def p_disjonction(t):
+    """disjonction : disjonction OR union"""
+    t[0] = t[1]
+    t[0].append(Union(t[3]))
+
+def p_expression(t):
+    """expression : disjonction"""
+    assert isinstance(t[1], list)
+    t[0] = Or(t[1])
+
+
+def p_error(t):
+    raise ParseError("Syntax error at '%s'" % t.value)
+
+parser = yacc.yacc(start='expression')
+
+def normalize(tree):
+    if isinstance(tree, (List, Or, And, Union, Intersection)) and \
+            len(tree.list) == 1:
+        return normalize(tree.list[0])
+    elif isinstance(tree, (List, Or, And, Union, Intersection)):
+        return tree.__class__(list(map(normalize, tree.list)))
+    elif isinstance(tree, Triple):
+        return Triple(normalize(tree.subject),
+                      normalize(tree.predicate),
+                      normalize(tree.object))
     else:
-        assert isinstance(lists, list)
-        if len(lists) == 3:
-            return Triple(*map(make_triples, lists))
-        else:
-            raise ParseError('“Triple” of size %d: %r' % (len(lists), lists))
-
-
+        return tree
 
 def parse_triples(sentence):
-    return list(map(make_triples, parse_forest(lex_triples(sentence))))
-
+    return normalize(parser.parse(sentence))

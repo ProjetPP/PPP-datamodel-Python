@@ -4,6 +4,7 @@ from .abstractnode import register, AbstractNode
 from .list import List
 
 def to_abstract_node(x):
+    assert isinstance(x, (AbstractNode, dict)), x
     return x if isinstance(x, AbstractNode) else AbstractNode.from_dict(x)
 
 class ListNodeOperator(AbstractNode):
