@@ -67,7 +67,7 @@ class Intersection(ListOperator):
     __slots__ = ()
     _type = 'intersection'
 @register
-class And(ListNodeOperator):
+class And(ListOperator):
     __slots__ = ()
     _type = 'and'
 @register
