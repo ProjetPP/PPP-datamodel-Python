@@ -80,15 +80,24 @@ def p_conjonction(t):
     t[0] = t[1]
     t[0].append(t[3])
 
-
-def p_intersection_empty(t):
-    """intersection : conjonction"""
+def p_disjonction_empty(t):
+    """disjonction : conjonction"""
     assert isinstance(t[1], list), t[1]
     t[0] = [And(t[1])]
-def p_intersection(t):
-    """intersection : intersection INTERSECTION conjonction"""
+def p_disjonction(t):
+    """disjonction : disjonction OR conjonction"""
     t[0] = t[1]
     t[0].append(And(t[3]))
+
+
+def p_intersection_empty(t):
+    """intersection : disjonction"""
+    assert isinstance(t[1], list), t[1]
+    t[0] = [Or(t[1])]
+def p_intersection(t):
+    """intersection : intersection INTERSECTION disjonction"""
+    t[0] = t[1]
+    t[0].append(Or(t[3]))
 
 def p_union_empty(t):
     """union : intersection"""
@@ -99,20 +108,10 @@ def p_union(t):
     t[0] = t[1]
     t[0].append(Intersection(t[3]))
 
-
-def p_disjonction_empty(t):
-    """disjonction : union"""
-    assert isinstance(t[1], list), t[1]
-    t[0] = [Union(t[1])]
-def p_disjonction(t):
-    """disjonction : disjonction OR union"""
-    t[0] = t[1]
-    t[0].append(Union(t[3]))
-
 def p_expression(t):
-    """expression : disjonction"""
+    """expression : union"""
     assert isinstance(t[1], list)
-    t[0] = Or(t[1])
+    t[0] = Union(t[1])
 
 
 def p_error(t):
