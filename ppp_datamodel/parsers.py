@@ -123,18 +123,20 @@ def p_error(t):
 
 parser = yacc.yacc(start='expression')
 
-def normalize(tree):
+def simplify(tree):
+    """Simplify a tree (makes it more human/developper-readable) by
+    remplacing singletons by an item."""
     if isinstance(tree, (List, Or, And, Union, Intersection)) and \
             len(tree.list) == 1:
-        return normalize(tree.list[0])
+        return simplify(tree.list[0])
     elif isinstance(tree, (List, Or, And, Union, Intersection)):
-        return tree.__class__(list(map(normalize, tree.list)))
+        return tree.__class__(list(map(simplify, tree.list)))
     elif isinstance(tree, Triple):
-        return Triple(normalize(tree.subject),
-                      normalize(tree.predicate),
-                      normalize(tree.object))
+        return Triple(simplify(tree.subject),
+                      simplify(tree.predicate),
+                      simplify(tree.object))
     else:
         return tree
 
 def parse_triples(sentence):
-    return normalize(parser.parse(sentence))
+    return simplify(parser.parse(sentence))
