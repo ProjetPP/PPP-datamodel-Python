@@ -71,7 +71,7 @@ class AbstractNode:
 
     def get(self, name, strict=True):
         """Get an attribute of the node (read-only access)."""
-        if name.startswith('_'):
+        if not isinstance(name, str) or name.startswith('_'):
             raise AttributeError(self.__class__.__name__, name)
         elif strict and name not in self._possible_attributes:
             raise AttributeError('%s is not a valid attribute of %r.' %
@@ -136,3 +136,13 @@ class AbstractNode:
     def _select_class(cls, data):
         return TYPE_TO_CLASS[data['type']]
 
+    def traverse(self, predicate):
+        def wrapper(tree):
+            if isinstance(tree, AbstractNode):
+                return tree.traverse(predicate)
+            else:
+                return tree
+        arguments = {x: wrapper(y)
+                     for (x, y) in self._attributes.items()
+                     if y != 'type'}
+        return predicate(self.__class__(**arguments))

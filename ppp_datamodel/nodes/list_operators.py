@@ -30,7 +30,7 @@ class ListOperator(AbstractNode):
 
     def _check_attributes(self, attributes):
         super(ListOperator, self)._check_attributes(attributes)
-        if not isinstance(attributes['list'], list):
+        if not hasattr(attributes['list'], '__iter__'):
             raise TypeError('The “list” argument of the %s constructor '
                             'should be an iterable, not %r' %
                             (self.__class__.__name__, attributes['list']))
@@ -51,6 +51,10 @@ class ListOperator(AbstractNode):
         d = super().as_dict()
         d['list'] = [x.as_dict() for x in self.list]
         return d
+
+    def traverse(self, predicate):
+        return predicate(self.__class__([x.traverse(predicate)
+                                         for x in self.list]))
 
 class PredicateListOperator(ListNodeOperator):
     __slots__ = ()
