@@ -2,6 +2,7 @@ import json
 import datetime
 
 from ppp_datamodel import AbstractNode, Triple, Resource, Missing
+from ppp_datamodel import List, Union
 from ppp_datamodel import exceptions
 
 from unittest import TestCase
@@ -106,3 +107,47 @@ class BaseAbstractNodeTests(TestCase):
     def testSerialize(self):
         d = {'type': 'resource', 'value': 'foo', 'value-type': 'bar', 'baz-qux': 'quux'}
         self.assertEqual(AbstractNode.from_dict(d).as_dict(), d)
+
+    def testTraverse(self):
+        def pred(tree):
+            if isinstance(tree, Resource):
+                return Resource('foo')
+            elif isinstance(tree, Triple):
+                return Triple(tree.subject, Resource('bar'), tree.object)
+            elif isinstance(tree, Missing):
+                return Resource('m')
+            else:
+                return tree
+        f = Resource('foo')
+        b = Resource('bar')
+        m = Resource('m')
+        self.assertEqual(Resource('baz').traverse(pred), f)
+        tree = Triple(Resource('1'), Resource('2'), Missing())
+        self.assertEqual(tree.traverse(pred), Triple(f, b, m))
+        tree = List([
+                    Resource('4'),
+                    Triple(Missing(), Resource('5'), Missing())
+                    ])
+        self.assertEqual(tree.traverse(pred),
+                List([
+                    f,
+                    Triple(m, b, m)
+                    ]))
+        tree = Triple(
+                Triple(Resource('1'), Resource('2'), Missing()),
+                Resource('3'),
+                List([
+                    Resource('4'),
+                    Triple(Missing(), Resource('5'), Missing())
+                    ]))
+        self.assertEqual(tree.traverse(pred),
+                Triple(
+                    Triple(f, b, m),
+                    b,
+                    List([
+                        f,
+                        Triple(m, b, m)
+                        ])))
+        tree = Union([List([Resource('1')]), List([Resource('2')])])
+        self.assertEqual(tree.traverse(pred),
+                Union([List([f]), List([f])]))

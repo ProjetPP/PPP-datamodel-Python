@@ -29,3 +29,7 @@ class List(AbstractNode):
 
     def as_dict(self):
         return {'type': self.type, 'list': [x.as_dict() for x in self.list]}
+
+    def traverse(self, predicate):
+        return predicate(self.__class__([x.traverse(predicate)
+                                         for x in self.list]))
