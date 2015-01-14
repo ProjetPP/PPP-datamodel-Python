@@ -4,7 +4,8 @@ from ..log import logger
 from .abstractnode import register, AbstractNode
 
 __all__ = ['Resource', 'StringResource', 'MathLatexResource',
-           'BooleanResource', 'TimeResource', 'GeojsonResource']
+           'BooleanResource', 'TimeResource', 'GeojsonResource',
+           'JsonldResource']
 
 EXTRA_ATTRIBUTES = {
         'string': ('language',),
