@@ -121,3 +121,18 @@ class GeojsonResource(Resource):
 
     def __hash__(self):
         return hash(freeze_dicts(self._attributes))
+
+@register_valuetype
+class JsonldResource(Resource):
+    _value_type = 'resource-jsonld'
+    _possible_attributes = Resource._possible_attributes + ('graph',)
+
+    @classmethod
+    def deserialize_attribute(cls, key, value):
+        if key == 'graph':
+            return value
+        else:
+            super().deserialize_attribute(key, value)
+
+    def __hash__(self):
+        return hash(freeze_dicts(self._attributes))

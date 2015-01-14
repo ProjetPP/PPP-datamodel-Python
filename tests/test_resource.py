@@ -40,3 +40,26 @@ class ResourceTests(TestCase):
         o = AbstractNode.from_dict(d)
         self.assertEqual(o.geojson['type'], 'Feature')
         hash(o)
+
+    def testJsonLd(self):
+        d = {
+            "type": "resource",
+            "value-type": "resource-jsonld",
+            "value": "Douglas Adams",
+            "graph": {
+                "@context": "http://schema.org/",
+                "@type": "GeoCoordinates",
+                "latitude": "45.72",
+                "longitude": "4.82",
+                "@reverse": {
+                    "geo": {
+                        "@type": "Place",
+                        "name": "Lyon",
+                        "sameAs": "http://www.wikidata.org/entity/Q456"
+                    }
+                }
+            }
+        }
+        o = AbstractNode.from_dict(d)
+        self.assertEqual(o.value, 'Douglas Adams')
+        self.assertEqual(o.graph['@context'], 'http://schema.org/')
