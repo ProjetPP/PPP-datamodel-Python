@@ -21,6 +21,10 @@ class ListNodeOperator(AbstractNode):
                             'should be a node, not %r' %
                             (self.__class__.__name__, attributes['list']))
 
+    def traverse(self, predicate):
+        return predicate(self.__class__([x.traverse(predicate)
+                                         for x in self.list]))
+
 class ListOperator(AbstractNode):
     """Base class for list operators.
     https://github.com/ProjetPP/Documentation/blob/master/data-model.md#union-intersection-and-or-first-and-last
@@ -39,8 +43,7 @@ class ListOperator(AbstractNode):
         L = attributes['list']
         assert hasattr(L, '__iter__') and not isinstance(L, AbstractNode)
         if all(isinstance(x, dict) for x in L):
-            L = [{'type': 'list', 'list': [x]} if x['type'] != 'list' else x
-                 for x in L]
+            pass
         else:
             assert not any(isinstance(x, dict) for x in L)
         L = tuple(to_abstract_node(l) for l in L)
