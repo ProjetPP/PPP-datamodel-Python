@@ -4,7 +4,7 @@ from ..log import logger
 from .abstractnode import register, AbstractNode
 
 __all__ = ['Resource', 'StringResource', 'MathLatexResource',
-           'BooleanResource', 'TimeResource', 'GeojsonResource',
+           'BooleanResource', 'TimeResource',
            'JsonldResource']
 
 EXTRA_ATTRIBUTES = {
@@ -107,21 +107,6 @@ def freeze_dicts(d):
         return tuple(map(freeze_dicts, d))
     else:
         return d
-
-@register_valuetype
-class GeojsonResource(Resource):
-    _value_type = 'geo-json'
-    _possible_attributes = Resource._possible_attributes + ('geojson',)
-
-    @classmethod
-    def deserialize_attribute(cls, key, value):
-        if key == 'geojson':
-            return value
-        else:
-            super().deserialize_attribute(key, value)
-
-    def __hash__(self):
-        return hash(freeze_dicts(self._attributes))
 
 @register_valuetype
 class JsonldResource(Resource):
