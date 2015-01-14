@@ -1,3 +1,5 @@
+import copy
+
 from ppp_datamodel import AbstractNode, Triple, Resource, Missing
 from ppp_datamodel import BooleanResource
 
@@ -48,19 +50,26 @@ class ResourceTests(TestCase):
             "value": "Douglas Adams",
             "graph": {
                 "@context": "http://schema.org/",
-                "@type": "GeoCoordinates",
-                "latitude": "45.72",
-                "longitude": "4.82",
-                "@reverse": {
-                    "geo": {
-                        "@type": "Place",
-                        "name": "Lyon",
-                        "sameAs": "http://www.wikidata.org/entity/Q456"
-                    }
-                }
+                "@type": "Person",
+                "name": {"@value": "Douglas Adams", "@language": "en"},
+                "description": [
+                    {"@value": "English writer and humorist", "@language": "en"},
+                    {"@value": "écrivain anglais de science-fiction", "@language": "fr"}
+                ],
+                "sameAs": "http://www.wikidata.org/entity/Q42",
             }
         }
         o = AbstractNode.from_dict(d)
         self.assertEqual(o.value, 'Douglas Adams')
         self.assertEqual(o.graph['@context'], 'http://schema.org/')
         hash(o)
+
+        d2 = copy.deepcopy(d)
+        d2['value'] = 'foo'
+        o2 = AbstractNode.from_dict(d2)
+        self.assertEqual(o, o2)
+        d3 = copy.deepcopy(d)
+        d3['graph']['sameAs'] = 'bar'
+        o3 = AbstractNode.from_dict(d3)
+        self.assertNotEqual(o, o3)
+        self.assertNotEqual(o2, o3)

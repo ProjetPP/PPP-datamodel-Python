@@ -136,3 +136,19 @@ class JsonldResource(Resource):
 
     def __hash__(self):
         return hash(freeze_dicts(self._attributes))
+
+    def get_uris(self):
+        uris = set()
+        if '@id' in self.graph:
+            uris.add(self.graph['@id'])
+        same_as = self.graph.get('sameAs', [])
+        if isinstance(same_as, str):
+            same_as = [same_as]
+        assert isinstance(same_as, list)
+        uris.update(same_as)
+        return uris
+
+    def __eq__(self, other):
+        if not isinstance(other, JsonldResource):
+            return False
+        return bool(self.get_uris() & other.get_uris())
