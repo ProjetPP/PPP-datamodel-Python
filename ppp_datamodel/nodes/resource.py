@@ -151,4 +151,5 @@ class JsonldResource(Resource):
     def __eq__(self, other):
         if not isinstance(other, JsonldResource):
             return False
-        return bool(self.get_uris() & other.get_uris())
+        return self.graph == other.graph or \
+                bool(self.get_uris() & other.get_uris())
