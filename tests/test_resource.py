@@ -62,7 +62,7 @@ class ResourceTests(TestCase):
         o = AbstractNode.from_dict(d)
         self.assertEqual(o.value, 'Douglas Adams')
         self.assertEqual(o.graph['@context'], 'http://schema.org/')
-        hash(o)
+        self.assertRaises(TypeError, hash, o)
 
         d2 = copy.deepcopy(d)
         d2['value'] = 'foo'

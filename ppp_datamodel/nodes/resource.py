@@ -136,7 +136,7 @@ class JsonldResource(Resource):
             super().deserialize_attribute(key, value)
 
     def __hash__(self):
-        return hash(freeze_dicts(self._attributes))
+        raise TypeError('%s instances are not hashable.' % self.__class__)
 
     def get_uris(self):
         uris = set()
