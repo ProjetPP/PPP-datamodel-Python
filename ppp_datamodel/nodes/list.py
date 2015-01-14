@@ -1,6 +1,7 @@
 """Contains the class representing a triple node."""
 
 from .abstractnode import register, AbstractNode
+from .resource import Resource
 
 @register
 class List(AbstractNode):
@@ -21,6 +22,7 @@ class List(AbstractNode):
         L = attributes['list']
         L = [AbstractNode.from_dict(x) if isinstance(x, dict) else x
              for x in L]
+        assert all(isinstance(x, Resource) for x in L), L
         attributes['list'] = L
         super(List, self)._parse_attributes(attributes)
 

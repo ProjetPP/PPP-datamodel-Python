@@ -2,7 +2,7 @@ import json
 import datetime
 
 from ppp_datamodel import AbstractNode, Triple, Resource, Missing
-from ppp_datamodel import List, Union
+from ppp_datamodel import List, Union, Intersection
 from ppp_datamodel import exceptions
 
 from unittest import TestCase
@@ -126,19 +126,19 @@ class BaseAbstractNodeTests(TestCase):
         self.assertEqual(tree.traverse(pred), Triple(f, b, m))
         tree = List([
                     Resource('4'),
-                    Triple(Missing(), Resource('5'), Missing())
+                    Resource('5')
                     ])
         self.assertEqual(tree.traverse(pred),
                 List([
                     f,
-                    Triple(m, b, m)
+                    f
                     ]))
         tree = Triple(
                 Triple(Resource('1'), Resource('2'), Missing()),
                 Resource('3'),
                 List([
                     Resource('4'),
-                    Triple(Missing(), Resource('5'), Missing())
+                    Resource('5')
                     ]))
         self.assertEqual(tree.traverse(pred),
                 Triple(
@@ -146,8 +146,39 @@ class BaseAbstractNodeTests(TestCase):
                     b,
                     List([
                         f,
-                        Triple(m, b, m)
+                        f,
                         ])))
         tree = Union([List([Resource('1')]), List([Resource('2')])])
         self.assertEqual(tree.traverse(pred),
                 Union([List([f]), List([f])]))
+        tree = Intersection([List([Resource('1')]), List([Resource('2')])])
+        self.assertEqual(tree.traverse(pred),
+                Intersection([List([f]), List([f])]))
+
+    def testTraverseContract(self):
+        f = Resource('foo')
+        def pred(tree):
+            if isinstance(tree, List):
+                return Resource('foo')
+            elif isinstance(tree, Intersection):
+                self.assertEqual(tree, Intersection([f, f]))
+                return tree
+            elif isinstance(tree, Resource):
+                return tree
+            else:
+                raise AssertionError(tree)
+        tree = Intersection([List([Resource('1')]), List([Resource('2')])])
+        self.assertEqual(tree.traverse(pred),
+                Intersection([f, f]))
+
+    def testTripleIntersection(self):
+        t = Intersection([
+            Triple(
+                Resource('a'),
+                Resource('b'),
+                Missing()),
+            Triple(
+                Resource('c'),
+                Resource('d'),
+                Missing())])
+        AbstractNode.from_dict(t.as_dict())

@@ -25,10 +25,9 @@ class ListOperatorTests(TestCase):
                        {"type": "list", "list": [{"type": "resource", "value": "Theodore Roosevelt"}]}]}
         o1 = AbstractNode.from_dict(d1)
         o2 = AbstractNode.from_dict(d2)
-        self.assertEqual(o1, o2)
-        self.assertEqual(o1.as_dict(), d2)
+        self.assertEqual(o1.as_dict(), d1)
         self.assertEqual(o2.as_dict(), d2)
-        self.assertEqual(o1.list[0], List([Resource('George Washington')]))
+        self.assertEqual(o1.list[0], Resource('George Washington'))
         o1.as_json()
 
     def testHash(self):
