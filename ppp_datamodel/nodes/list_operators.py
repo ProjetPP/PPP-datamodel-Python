@@ -89,6 +89,10 @@ class First(ListNodeOperator):
 class Last(ListNodeOperator):
     __slots__ = ()
     _type = 'last'
+@register
+class Exists(ListNodeOperator):
+    __slots__ = ()
+    _type = 'exists'
 
 @register
 class Sort(PredicateListOperator):
