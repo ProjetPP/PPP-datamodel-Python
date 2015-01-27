@@ -6,10 +6,10 @@ from .missing import Missing
 from .resource import *
 from .sentence import Sentence
 from .list import List
-from .list_operators import Union, Intersection, And, Or, First, Last, Sort
+from .list_operators import Union, Intersection, And, Or, First, Last, Sort, Exists
 
 from . import resource
 
 __all__ = resource.__all__ + ['AbstractNode', 'Triple', 'Missing',
         'Sentence', 'List', 'Union', 'Intersection', 'And', 'Or',
-        'First', 'Last', 'Sort']
+        'First', 'Last', 'Sort','Exists']
