@@ -1,5 +1,5 @@
 from ppp_datamodel import AbstractNode, Resource, List
-from ppp_datamodel import Union, First
+from ppp_datamodel import Union, First, Exists
 
 from unittest import TestCase
 
@@ -43,3 +43,11 @@ class ListOperatorTests(TestCase):
 
     def testFirst(self):
         First(List([Resource('foo'), Resource('bar')]))
+
+    def testTraverse(self):
+        def pred(node):
+            return node
+        Union([List([Resource('foo')]), List([Resource('bar')])]).traverse(pred)
+        First(List([Resource('foo'), Resource('bar')])).traverse(pred)
+        Exists(List([Resource('foo'), Resource('bar')])).traverse(pred)
+        Exists(Resource('foo')).traverse(pred)
