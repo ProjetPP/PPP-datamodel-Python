@@ -23,10 +23,10 @@ class ListNodeOperator(AbstractNode):
 
     def traverse(self, predicate):
         if isinstance(self.list, List):
-            L = List([x.traverse(predicate) for x in self.list.list])
+            L = self.list
         else:
-            L = List([self.list.traverse(predicate)])
-        return predicate(self.__class__(L))
+            L = List([self.list])
+        return predicate(self.__class__(L.traverse(predicate)))
 
 class ListOperator(AbstractNode):
     """Base class for list operators.

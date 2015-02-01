@@ -51,3 +51,17 @@ class ListOperatorTests(TestCase):
         First(List([Resource('foo'), Resource('bar')])).traverse(pred)
         Exists(List([Resource('foo'), Resource('bar')])).traverse(pred)
         Exists(Resource('foo')).traverse(pred)
+
+        def pred2(node):
+            if isinstance(node, Exists):
+                self.assertEqual(node.list, Resource('baz'))
+                return Resource('qux')
+            elif isinstance(node, List):
+                self.assertEqual(node.list, [Resource('bar')])
+                return Resource('baz')
+            elif isinstance(node, Resource):
+                return Resource('bar')
+            else:
+                assert False, node
+        self.assertEqual(Exists(Resource('foo')).traverse(pred2),
+                Resource('qux'))
