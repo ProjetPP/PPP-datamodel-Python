@@ -1,6 +1,7 @@
 """Contains operators that work on lists."""
 
 from .abstractnode import register, AbstractNode
+from .resource import Resource
 from .list import List
 
 def to_abstract_node(x):
@@ -22,7 +23,7 @@ class ListNodeOperator(AbstractNode):
                             (self.__class__.__name__, attributes['list']))
 
     def traverse(self, predicate):
-        if isinstance(self.list, List):
+        if isinstance(self.list, List) or not isinstance(self.list, Resource):
             L = self.list
         else:
             L = List([self.list])

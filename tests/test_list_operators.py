@@ -1,4 +1,4 @@
-from ppp_datamodel import AbstractNode, Resource, List
+from ppp_datamodel import AbstractNode, Resource, List, Triple, Missing
 from ppp_datamodel import Union, First, Exists
 
 from unittest import TestCase
@@ -64,4 +64,16 @@ class ListOperatorTests(TestCase):
             else:
                 assert False, node
         self.assertEqual(Exists(Resource('foo')).traverse(pred2),
+                Resource('qux'))
+
+        def pred3(node):
+            if isinstance(node, Exists):
+                return Resource('qux')
+            elif isinstance(node, List):
+                return Triple(Resource('baz'), Missing(), Missing())
+            elif isinstance(node, Resource):
+                return Resource('bar')
+            else:
+                assert False, node
+        self.assertEqual(Exists(Resource('foo')).traverse(pred3),
                 Resource('qux'))
