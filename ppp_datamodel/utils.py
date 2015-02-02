@@ -33,6 +33,8 @@ def isincluded(tree1,tree2):
     if isinstance(tree1,First) or isinstance(tree1,Last) or isinstance(tree1,Exists):
         return isincluded(tree1.list,tree2.list)
     # Intersection, Union, And, Or
+    if len(tree1.list) != len(tree2.list):
+        return False
     for elt in tree1.list:
         if not any(isincluded(elt,x) for x in tree2.list):
             return False

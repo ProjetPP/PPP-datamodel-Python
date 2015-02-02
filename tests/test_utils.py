@@ -43,7 +43,7 @@ class UtilsTests(TestCase):
         tree2=Triple(List([Resource('bar'),Resource('foo')]),List([Resource('a'),Resource('d'),Resource('b')]),Missing())
         self.assertTrue(f(tree1,tree2))
         self.assertFalse(f(tree2,tree1))
-    def testFirstLastSort(self):
+    def testInclusionFirstLastSort(self):
         f = utils.isincluded
         tree1=Triple(Resource('foo'),List([Resource('a'),Resource('b')]),Missing())
         tree2=Triple(List([Resource('bar'),Resource('foo')]),List([Resource('a'),Resource('d'),Resource('b')]),Missing())
@@ -53,3 +53,16 @@ class UtilsTests(TestCase):
         self.assertTrue(f(Sort(tree1,Resource('pred')),Sort(tree2,Resource('pred'))))
         self.assertFalse(f(Sort(tree2,Resource('pred')),Sort(tree1,Resource('pred'))))
         self.assertFalse(f(Sort(tree1,Resource('pred')),Sort(tree2,Resource('derp'))))
+    def testInclusionIntersectionUnionAndOr(self):
+        f = utils.isincluded
+        tree=[None]*5
+        tree1=Triple(Resource('foo'),List([Resource('a'),Resource('b')]),Missing())
+        tree2=Triple(List([Resource('bar'),Resource('foo')]),List([Resource('a'),Resource('d'),Resource('b')]),Missing())
+        tree3=Missing()
+        for op in [Intersection,Union,And,Or]:
+            self.assertTrue(f(op([tree1]),op([tree2])))
+            self.assertFalse(f(op([tree2]),op([tree1])))
+            self.assertTrue(f(op([tree1,tree3]),op([tree1,tree3])))
+            self.assertTrue(f(op([tree1,tree3]),op([tree3,tree1])))
+            self.assertFalse(f(op([tree1,tree3]),op([tree1])))
+            self.assertFalse(f(op([tree1]),op([tree3])))
