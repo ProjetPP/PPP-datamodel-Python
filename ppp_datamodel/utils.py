@@ -30,4 +30,10 @@ def isincluded(tree1,tree2):
             isincluded(tree1.object,tree2.object)
     if isinstance(tree1,Sort):
         return tree1.predicate == tree2.predicate and isincluded(tree1.list,tree2.list)
-    return isincluded(tree1.list,tree2.list)
+    if isinstance(tree1,First) or isinstance(tree1,Last) or isinstance(tree1,Exists):
+        return isincluded(tree1.list,tree2.list)
+    # Intersection, Union, And, Or
+    for elt in tree1.list:
+        if not any(isincluded(elt,x) for x in tree2.list):
+            return False
+    return True
