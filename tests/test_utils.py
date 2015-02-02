@@ -76,3 +76,8 @@ class UtilsTests(TestCase):
                 f(op([tree1, tree3]), op([tree1]))
             with self.assertRaises(AssertionError):
                 f(op([tree1]), op([tree3]))
+    def testUnknownClass(self):
+        class Foo:
+            pass
+        with self.assertRaises(Exception):
+            utils.InclusionAssertion().assertIncluded(Foo(),Foo())
