@@ -69,3 +69,9 @@ class InclusionAssertion:
             Check wether tree1 is included in tree2.
         """
         return self.isincluded(tree1,tree2,tree1,tree2)
+
+class InclusionTest(unittest.TestCase, InclusionAssertion):
+    """
+        Unit test for inclusion of objects from the datamodel.
+    """
+    pass
