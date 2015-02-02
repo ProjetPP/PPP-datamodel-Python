@@ -43,3 +43,13 @@ class UtilsTests(TestCase):
         tree2=Triple(List([Resource('bar'),Resource('foo')]),List([Resource('a'),Resource('d'),Resource('b')]),Missing())
         self.assertTrue(f(tree1,tree2))
         self.assertFalse(f(tree2,tree1))
+    def testFirstLastSort(self):
+        f = utils.isincluded
+        tree1=Triple(Resource('foo'),List([Resource('a'),Resource('b')]),Missing())
+        tree2=Triple(List([Resource('bar'),Resource('foo')]),List([Resource('a'),Resource('d'),Resource('b')]),Missing())
+        for op in [Last,First]:
+            self.assertTrue(f(op(tree1),op(tree2)))
+            self.assertFalse(f(op(tree2),op(tree1)))
+        self.assertTrue(f(Sort(tree1,Resource('pred')),Sort(tree2,Resource('pred'))))
+        self.assertFalse(f(Sort(tree2,Resource('pred')),Sort(tree1,Resource('pred'))))
+        self.assertFalse(f(Sort(tree1,Resource('pred')),Sort(tree2,Resource('derp'))))
