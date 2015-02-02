@@ -24,7 +24,7 @@ def isincluded(tree1, tree2):
         return True
     elif isinstance(tree1, List):
         return set(tree1.list).issubset(set(tree2.list))
-    elif isinstance(tree1, triple):
+    elif isinstance(tree1, Triple):
         return  isincluded(tree1.subject, tree2.subject) and\
             isincluded(tree1.predicate, tree2.predicate) and\
             isincluded(tree1.object, tree2.object)

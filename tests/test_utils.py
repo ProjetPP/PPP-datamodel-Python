@@ -29,7 +29,7 @@ class UtilsTests(TestCase):
         self.assertFalse(f(List([Resource('foo'), Resource('bar')]), List([Resource('foo')])))
     def testInclusionDifferentType(self):
         f = utils.isincluded
-        l = [Resource('foo'), Missing(), triple(Resource('foo'), Resource('foo'), Resource('foo')),\
+        l = [Resource('foo'), Missing(), Triple(Resource('foo'), Resource('foo'), Resource('foo')),\
             Intersection([Resource('foo')]), Union([Resource('foo')]),\
             And([Resource('foo')]), Or([Resource('foo')]), Exists(Resource('foo')),\
             First(Resource('foo')), Last(Resource('foo')), Sort(Resource('foo'), Resource('pred'))]
@@ -56,7 +56,7 @@ class UtilsTests(TestCase):
         tree1=Triple(Resource('foo'), List([Resource('a'), Resource('b')]), Missing())
         tree2=Triple(List([Resource('bar'), Resource('foo')]), List([Resource('a'), Resource('d'), Resource('b')]), Missing())
         tree3=Missing()
-        for op in [Intersection,Union,And, or]:
+        for op in [Intersection,Union,And, Or]:
             self.assertTrue(f(op([tree1]), op([tree2])))
             self.assertFalse(f(op([tree2]), op([tree1])))
             self.assertTrue(f(op([tree1, tree3]), op([tree1, tree3])))
