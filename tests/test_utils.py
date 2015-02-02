@@ -31,9 +31,15 @@ class UtilsTests(TestCase):
         l = [Resource('foo'),Missing(),Triple(Resource('foo'),Resource('foo'),Resource('foo')),\
             Intersection([Resource('foo')]), Union([Resource('foo')]),\
             And([Resource('foo')]), Or([Resource('foo')]), Exists(Resource('foo')),\
-            First(Resource('foo')), Last(Resource('foo')), Sort(Resource('foo'),'pred')]
+            First(Resource('foo')), Last(Resource('foo')), Sort(Resource('foo'),Resource('pred'))]
         for t1 in l:
             for t2 in l:
                 if type(t1) == type(t2):
                     break
                 self.assertFalse(f(t1,t2))
+    def testInclusionTriple(self):
+        f = utils.isincluded
+        tree1=Triple(Resource('foo'),List([Resource('a'),Resource('b')]),Missing())
+        tree2=Triple(List([Resource('bar'),Resource('foo')]),List([Resource('a'),Resource('d'),Resource('b')]),Missing())
+        self.assertTrue(f(tree1,tree2))
+        self.assertFalse(f(tree2,tree1))
