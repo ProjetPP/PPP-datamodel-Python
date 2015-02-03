@@ -69,7 +69,7 @@ class InclusionTestCase(unittest.TestCase):
                             (elt, tree2.list, originalTree1, originalTree2))
             return
         else:
-            raise Exception('Unknown class.')
+            raise TypeError('Object of unknown class: %r' % (tree1,))
 
     def contains(self, elt, l):
         """
