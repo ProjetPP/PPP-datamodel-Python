@@ -75,12 +75,10 @@ class InclusionTestCase(unittest.TestCase):
         """
         Return True if and only if l contains elt (in the isincluded meaning).
         """
-        included = False
         for elt2 in l:
             try:
                 self.assertIncluded(elt, elt2, None, None)
             except AssertionError:
                 continue
-            included = True
-            break
-        return included
+            return True
+        return False
