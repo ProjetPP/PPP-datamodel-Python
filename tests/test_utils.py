@@ -88,5 +88,5 @@ class UtilsTests(utils.InclusionTestCase):
     def testUnknownClass(self):
         class Foo:
             pass
-        with self.assertRaises(Exception):
-            utils.InclusionAssertion().assertIncluded(Foo(),Foo())
+        with self.assertRaises(TypeError):
+            self.assertIncluded(Foo(),Foo())
