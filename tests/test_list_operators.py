@@ -44,7 +44,7 @@ class ListOperatorTests(TestCase):
     def testFirst(self):
         First(List([Resource('foo'), Resource('bar')]))
 
-    def testTraverse(self):
+    def testTraverseNoException(self):
         def pred(node):
             return node
         Union([List([Resource('foo')]), List([Resource('bar')])]).traverse(pred)
@@ -52,7 +52,8 @@ class ListOperatorTests(TestCase):
         Exists(List([Resource('foo'), Resource('bar')])).traverse(pred)
         Exists(Resource('foo')).traverse(pred)
 
-        def pred2(node):
+    def testTraverseOrder(self):
+        def pred(node):
             if isinstance(node, Exists):
                 self.assertEqual(node.list, Resource('baz'))
                 return Resource('qux')
@@ -63,10 +64,11 @@ class ListOperatorTests(TestCase):
                 return Resource('bar')
             else:
                 assert False, node
-        self.assertEqual(Exists(Resource('foo')).traverse(pred2),
+        self.assertEqual(Exists(Resource('foo')).traverse(pred),
                 Resource('qux'))
 
-        def pred3(node):
+    def testTraverseReturnTriple(self):
+        def pred(node):
             if isinstance(node, Exists):
                 return Resource('qux')
             elif isinstance(node, List):
@@ -75,5 +77,5 @@ class ListOperatorTests(TestCase):
                 return Resource('bar')
             else:
                 assert False, node
-        self.assertEqual(Exists(Resource('foo')).traverse(pred3),
+        self.assertEqual(Exists(Resource('foo')).traverse(pred),
                 Resource('qux'))
