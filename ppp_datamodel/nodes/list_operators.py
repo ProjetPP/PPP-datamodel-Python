@@ -67,6 +67,19 @@ class PredicateListOperator(ListNodeOperator):
     __slots__ = ()
     _possible_attributes = ('list', 'predicate')
 
+    def _check_attributes(self, attributes):
+        super()._check_attributes(attributes)
+        if not isinstance(attributes['predicate'], Resource):
+            raise TypeError('predicate should be a Resource, not %r' %
+                    attributes['predicate'])
+    def traverse(self, predicate):
+        if isinstance(self.list, List) or not isinstance(self.list, Resource):
+            L = self.list
+        else:
+            L = List([self.list])
+        return predicate(self.__class__(
+                list=L.traverse(predicate),
+                predicate=self.predicate.traverse(predicate)))
 
 
 @register
