@@ -58,3 +58,6 @@ class ResourceTests(TestCase):
         o3 = AbstractNode.from_dict(d3)
         self.assertNotEqual(o, o3)
         self.assertNotEqual(o2, o3)
+
+    def testString(self):
+        self.assertRaises(TypeError, Resource, ['foo', 'bar'])

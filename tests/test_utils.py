@@ -12,7 +12,7 @@ class UtilsTests(utils.InclusionTestCase):
     def testContainsMissing(self):
         f = utils.contains_missing
         self.assertTrue(f(T(subject=R(value='foo'), object=T(subject=M()))))
-        self.assertFalse(f(T(subject=R(value='foo'), object=T(subject=R()))))
+        self.assertFalse(f(T(subject=R(value='foo'), object=T(subject=R('foo')))))
         self.assertTrue(f(M()))
     def testInclusionBasic(self):
         self.assertIncluded(Missing(), Missing())

@@ -38,6 +38,12 @@ class Resource(AbstractNode):
             type_ = 'string'
         return VALUE_TYPE_TO_CLASS[type_]
 
+    def _check_attributes(self, attributes):
+        super()._check_attributes(attributes)
+        if not isinstance(attributes['value'], str):
+            raise TypeError('%s\'s value must be a string, not %r.' %
+                    attributes['value'])
+
     def _parse_attributes(self, attributes):
         attributes['value'] = self._parse_value(attributes.get('value', None),
                                                 attributes)
