@@ -18,21 +18,11 @@ class Triple(AbstractNode):
             raise TypeError('One of Triple\'s constructor argument '
                             'is not an AbstractNode instance.')
 
-    def predicate_among(self, L):
-        # Be quite permissive about what we accept as L and convert it to
-        # a (frozen)set.
-        if isinstance(L, AbstractNode):
-            L = frozenset({L})
-        elif not isinstance(L, (set, frozenset)):
-            pass
-        elif hasattr(L, '__iter__'):
-            L = frozenset(L)
-        else:
-            raise TypeError('%r is neither an interable or an AbstractNode.' %
-                    L)
-
-        # Check if any of the predicates is in L.
+    @property
+    def predicate_set(self):
+        """Return a frozenset of predicates, extracting it from the list
+        if it is a List node."""
         if isinstance(self.predicate, List):
-            return not frozenset(self.predicate.list).isdisjoint(L)
+            return frozenset(self.predicate.list)
         else:
-            return self.predicate in L
+            return frozenset({self.predicate})

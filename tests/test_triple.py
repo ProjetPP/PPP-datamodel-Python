@@ -12,20 +12,8 @@ R = Resource
 M = Missing
 
 class BaseAbstractNodeTests(TestCase):
-    def testPredicateAmong(self):
-        self.assertTrue(T(M(), R('foo'), M()).predicate_among(R('foo')))
-        self.assertTrue(T(M(), R('bar'), M()).predicate_among([
-            R('foo'), R('bar'), R('baz')]))
-        self.assertFalse(T(M(), R('qux'), M()).predicate_among([
-            R('foo'), R('bar'), R('baz')]))
-        self.assertTrue(T(M(), R('bar'), M()).predicate_among({
-            R('foo'), R('bar'), R('baz')}))
-        self.assertFalse(T(M(), R('qux'), M()).predicate_among({
-            R('foo'), R('bar'), R('baz')}))
-        self.assertTrue(T(M(), List([R('qux'), R('bar')]), M()) \
-                .predicate_among({R('foo'), R('bar'), R('baz')}))
-        self.assertFalse(T(M(), List([R('qux'), R('quux')]), M()) \
-                .predicate_among({R('foo'), R('bar'), R('baz')}))
-        with self.assertRaises(TypeError):
-            self.assertFalse(T(M(), R('foo'), M()).predicate_among('foo'))
-
+    def testPredicateSet(self):
+        self.assertEqual(T(M(), R('foo'), M()).predicate_set,
+                {R('foo')})
+        self.assertEqual(T(M(), List([R('foo'), R('bar')]), M()).predicate_set,
+                {R('foo'), R('bar')})
