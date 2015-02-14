@@ -22,6 +22,14 @@ class BaseAbstractNodeTests(TestCase):
         self.assertEqual(n['subject'], R('s'))
         self.assertRaises(AttributeError, lambda: n.foobar)
 
+    def testSet(self):
+        n = Triple(subject=R('s'), predicate=R('p'), object=R('o'))
+        with self.assertRaises(TypeError):
+            n.predicate = R('test')
+        with self.assertRaises(TypeError):
+            del n.predicate
+
+
     def testEmptyConstructor(self):
         n = Triple()
         self.assertRaises(exceptions.AttributeNotProvided,

@@ -82,6 +82,19 @@ class AbstractNode:
             raise exceptions.AttributeNotProvided(name)
     __getattr__ = __getitem__ = get
 
+    def __setattr__(self, name, value):
+        if name.startswith('_'):
+            super().__setattr__(name, value)
+        else:
+            raise TypeError('%s\'s attributes are not settable.' %
+                    self.__class__.__name__)
+    def __delattr__(self, name):
+        if name.startswith('_'):
+            super().__delattr__(name, value)
+        else:
+            raise TypeError('%s\'s attributes are not settable.' %
+                    self.__class__.__name__)
+
     def has(self, name):
         """Check existence of an attribute."""
         return name in self._attributes
