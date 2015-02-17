@@ -157,5 +157,5 @@ class AbstractNode:
                 return tree
         arguments = {x: wrapper(y)
                      for (x, y) in self._attributes.items()
-                     if y != 'type'}
+                     if x != 'type'}
         return predicate(self.__class__(**arguments))

@@ -15,6 +15,10 @@ class ResourceTests(TestCase):
         self.assertRaises(AttributeError, o.get, 'extra')
         self.assertEqual(o.get('extra', strict=False), 'baz')
         self.assertEqual(o.as_dict(), d)
+        self.assertEqual(Resource('foo').traverse(lambda x:x),
+                Resource('foo'))
+        self.assertEqual(Resource('type').traverse(lambda x:x),
+                Resource('type'))
 
     def testBoolean(self):
         d = {'type': 'resource', 'value': 'true', 'value-type': 'boolean'}
