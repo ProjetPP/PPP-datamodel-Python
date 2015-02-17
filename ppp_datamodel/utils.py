@@ -44,7 +44,10 @@ class InclusionTestCase(unittest.TestCase):
                     originalTree1, originalTree2)
             self.assertIncluded(tree1.predicate, tree2.predicate,
                         originalTree1, originalTree2)
-            self.assertIncluded(tree1.object, tree2.object)
+            self.assertIncluded(tree1.object, tree2.object,
+                        originalTree1, originalTree2)
+            self.assertIncluded(tree1.inverse_predicate, tree2.inverse_predicate,
+                        originalTree1, originalTree2)
         elif isinstance(tree1, Sort):
             if tree1.predicate != tree2.predicate:
                 raise AssertionError(

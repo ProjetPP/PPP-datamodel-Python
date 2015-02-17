@@ -52,6 +52,12 @@ class UtilsTests(utils.InclusionTestCase):
         self.assertIncluded(tree1, tree2)
         with self.assertRaises(AssertionError):
             self.assertIncluded(tree2, tree1)
+    def testInclusionTriple2(self):
+        tree1=Triple(Resource('a'),Resource('b'), Resource('c'), Resource('d'))
+        tree2=Triple(Resource('a'),Resource('b'), Resource('c'), List([Resource('d'),Resource('e')]))
+        self.assertIncluded(tree1, tree2)
+        with self.assertRaises(AssertionError):
+            self.assertIncluded(tree2, tree1)
     def testInclusionFirstLastSort(self):
         tree1=Triple(Resource('foo'), List([Resource('a'), Resource('b')]),
                 Missing())
