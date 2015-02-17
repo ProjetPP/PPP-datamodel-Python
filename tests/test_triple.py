@@ -17,3 +17,16 @@ class BaseAbstractNodeTests(TestCase):
                 {R('foo')})
         self.assertEqual(T(M(), List([R('foo'), R('bar')]), M()).predicate_set,
                 {R('foo'), R('bar')})
+
+    def testInversePredicateEmpty(self):
+        self.assertEqual(T(M(), M(), M()).inverse_predicate, List([]))
+        self.assertEqual(T(M(), M(), M(), M()).inverse_predicate, M())
+        self.assertEqual(T(M(), M(), M()),
+                {'type': 'triple', 'object': {'type': 'missing'},
+                 'subject': {'type': 'missing'},
+                 'predicate': {'type': 'missing'}})
+        self.assertEqual(T(M(), M(), M(), M()),
+                {'type': 'triple', 'object': {'type': 'missing'},
+                 'subject': {'type': 'missing'},
+                 'predicate': {'type': 'missing'},
+                 'inverse-predicate': {'type': 'missing'}})
