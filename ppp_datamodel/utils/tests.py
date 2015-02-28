@@ -1,6 +1,6 @@
-"""Utilities for using the PPP datamodel."""
+"""Utilities for making tests on datamodel objects."""
 
-from . import Resource, Triple, Missing, Intersection, List, Union, And, Or, Exists, First, Last, Sort
+from ..nodes import Resource, Triple, Missing, Intersection, List, Union, And, Or, Exists, First, Last, Sort
 import unittest
 
 def contains_missing(tree):
