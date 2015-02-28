@@ -46,3 +46,7 @@ class Triple(AbstractNode):
             return frozenset(self.inverse_predicate.list)
         else:
             return frozenset({self.inverse_predicate})
+
+    def inverse(self):
+        return self.__class__(self.object, self.inverse_predicate,
+                self.subject, self.predicate)

@@ -30,3 +30,9 @@ class BaseAbstractNodeTests(TestCase):
                  'subject': {'type': 'missing'},
                  'predicate': {'type': 'missing'},
                  'inverse-predicate': {'type': 'missing'}})
+
+    def testInverse(self):
+        self.assertEqual(T(R('foo'), R('bar'), R('baz'), R('qux')).inverse(),
+                T(R('baz'), R('qux'), R('foo'), R('bar')))
+        self.assertEqual(T(R('foo'), R('bar'), R('baz')).inverse(),
+                T(R('baz'), List([]), R('foo'), R('bar')))
