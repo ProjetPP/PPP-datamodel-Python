@@ -26,6 +26,7 @@ setup(
     packages=[
         'ppp_datamodel',
         'ppp_datamodel.nodes',
+        'ppp_datamodel.utils',
         'ppp_datamodel.communication',
     ],
 )
