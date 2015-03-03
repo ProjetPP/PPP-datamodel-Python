@@ -1,3 +1,5 @@
+# coding: utf8
+
 """Contains the class representing a triple node."""
 
 from .abstractnode import register, AbstractNode

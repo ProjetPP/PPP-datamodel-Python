@@ -1,3 +1,5 @@
+# coding: utf8
+
 """Contains operators that work on lists."""
 
 from .abstractnode import register, AbstractNode
@@ -55,7 +57,7 @@ class ListOperator(AbstractNode):
         super(ListOperator, self)._parse_attributes(attributes)
 
     def as_dict(self):
-        d = super().as_dict()
+        d = super(ListOperator, self).as_dict()
         d['list'] = [x.as_dict() for x in self.list]
         return d
 
@@ -68,7 +70,7 @@ class PredicateListOperator(ListNodeOperator):
     _possible_attributes = ('list', 'predicate')
 
     def _check_attributes(self, attributes):
-        super()._check_attributes(attributes)
+        super(PredicateListOperator, self)._check_attributes(attributes)
         if not isinstance(attributes['predicate'], Resource):
             raise TypeError('predicate should be a Resource, not %r' %
                     attributes['predicate'])

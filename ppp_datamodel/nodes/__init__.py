@@ -1,3 +1,5 @@
+# coding: utf8
+
 """Classes representing the nodes of data model of the Projet Pensées Profondes."""
 
 from .abstractnode import AbstractNode

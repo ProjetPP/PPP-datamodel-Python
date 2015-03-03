@@ -1,3 +1,4 @@
+# coding: utf8
 import copy
 
 from ppp_datamodel import AbstractNode, Triple, Resource, Missing
@@ -6,6 +7,10 @@ from ppp_datamodel import BooleanResource
 from unittest import TestCase
 
 class ResourceTests(TestCase):
+    def testEquality(self):
+        self.assertEqual(Resource('foo'), Resource('foo'))
+        self.assertNotEqual(Resource('foo'), Resource('bar'))
+
     def testValueType(self):
         d = {'type': 'resource', 'value': 'foo', 'value-type': 'bar',
              'extra': 'baz'}

@@ -1,3 +1,5 @@
+# coding: utf8
+
 """Utilities for making tests on datamodel objects."""
 
 from ..nodes import Resource, Triple, Missing, Intersection, List, Union, And, Or, Exists, First, Last, Sort

@@ -1,7 +1,7 @@
 from .. import exceptions
 from ..log import logger
 
-class AttributesHolder:
+class AttributesHolder(object):
     """Stores attributes and provides read-only access to them."""
     __slots__ = ('_attributes')
     _possible_attributes = None
@@ -32,6 +32,8 @@ class AttributesHolder:
             return self._attributes == other._attributes
         else:
             return False
+    def __ne__(self, other):
+        return not (self == other)
 
     def __hash__(self):
         return hash(frozenset(self._attributes.items()))
@@ -51,13 +53,13 @@ class AttributesHolder:
 
     def __setattr__(self, name, value):
         if name.startswith('_'):
-            super().__setattr__(name, value)
+            super(AttributesHolder, self).__setattr__(name, value)
         else:
             raise TypeError('%s\'s attributes are not settable.' %
                     self.__class__.__name__)
     def __delattr__(self, name):
         if name.startswith('_'):
-            super().__delattr__(name, value)
+            super(AttributesHolder, self).__delattr__(name, value)
         else:
             raise TypeError('%s\'s attributes are not settable.' %
                     self.__class__.__name__)

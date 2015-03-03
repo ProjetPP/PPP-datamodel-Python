@@ -1,11 +1,15 @@
 """Contains the class representing a resource leaf."""
 
+import sys
 from ..log import logger
 from .abstractnode import register, AbstractNode
 
 __all__ = ['Resource', 'StringResource', 'MathLatexResource',
            'BooleanResource', 'TimeResource',
            'JsonldResource']
+
+if sys.version_info[0] >= 3:
+    basestring = str
 
 EXTRA_ATTRIBUTES = {
         'string': ('language',),
@@ -39,15 +43,15 @@ class Resource(AbstractNode):
         return VALUE_TYPE_TO_CLASS[type_]
 
     def _check_attributes(self, attributes):
-        super()._check_attributes(attributes)
-        if not isinstance(attributes['value'], str):
+        super(Resource, self)._check_attributes(attributes)
+        if not isinstance(attributes['value'], basestring):
             raise TypeError('%s\'s value must be a string, not %r.' %
-                    attributes['value'])
+                    (self.__class__.__name__, attributes['value']))
 
     def _parse_attributes(self, attributes):
         attributes['value'] = self._parse_value(attributes.get('value', None),
                                                 attributes)
-        super()._parse_attributes(attributes)
+        super(Resource, self)._parse_attributes(attributes)
 
     @staticmethod
     def _parse_value(value, attributes):
@@ -58,7 +62,7 @@ class Resource(AbstractNode):
         return value
 
     def as_dict(self):
-        d = super().as_dict()
+        d = super(Resource, self).as_dict()
         type_ = d.get('value-type', self._value_type)
         value = d.get('value')
         d['value'] = self._format_value(value)
@@ -124,7 +128,7 @@ class JsonldResource(Resource):
         if key == 'graph':
             return value
         else:
-            super().deserialize_attribute(key, value)
+            super(JsonldResource, self).deserialize_attribute(key, value)
 
     def __hash__(self):
         raise TypeError('%s instances are not hashable.' % self.__class__)
