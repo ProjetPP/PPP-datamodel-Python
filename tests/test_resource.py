@@ -7,6 +7,10 @@ from ppp_datamodel import BooleanResource
 from unittest import TestCase
 
 class ResourceTests(TestCase):
+    def testEquality(self):
+        self.assertEqual(Resource('foo'), Resource('foo'))
+        self.assertNotEqual(Resource('foo'), Resource('bar'))
+
     def testValueType(self):
         d = {'type': 'resource', 'value': 'foo', 'value-type': 'bar',
              'extra': 'baz'}

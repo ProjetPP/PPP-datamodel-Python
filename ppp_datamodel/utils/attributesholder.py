@@ -32,6 +32,8 @@ class AttributesHolder(object):
             return self._attributes == other._attributes
         else:
             return False
+    def __ne__(self, other):
+        return not (self == other)
 
     def __hash__(self):
         return hash(frozenset(self._attributes.items()))
