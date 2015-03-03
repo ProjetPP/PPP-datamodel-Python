@@ -1,19 +1,22 @@
 language: python
 
 python:
+  - 2.7
   - 3.2
   - 3.3
   - 3.4
+  - pypy
   - pypy3
 
 install:
     - pip install scrutinizer-ocular coverage
 
 before_script:
-  - ./setup.py install
+  - python setup.py install
 
 script:
-  - coverage3 run run_tests.py
+  - python run_tests.py
+  - if [ "$TRAVIS_PYTHON_VERSION" = "3.4" ]; then coverage3 run run_tests.py;fi
 
 after_script:
   - ocular --data-file ".coverage"

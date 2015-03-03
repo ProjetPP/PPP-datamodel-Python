@@ -1,3 +1,4 @@
+# coding: utf8
 import copy
 
 from ppp_datamodel import AbstractNode, Triple, Resource, Missing

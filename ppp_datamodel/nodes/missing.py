@@ -1,3 +1,5 @@
+# coding: utf8
+
 """Contains the class representing a “missing” leaf."""
 
 from .abstractnode import register, AbstractNode

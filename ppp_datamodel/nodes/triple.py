@@ -23,7 +23,7 @@ class Triple(AbstractNode):
     def as_dict(self):
         """Do not put inverse-predicate in the output dict if it
         is an empty list."""
-        d = super().as_dict()
+        d = super(Triple, self).as_dict()
         if d['inverse-predicate']['type'] == 'list' and \
                 d['inverse-predicate']['list'] == []:
             del d['inverse-predicate']
