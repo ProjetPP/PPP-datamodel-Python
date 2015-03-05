@@ -3,6 +3,7 @@
 from .abstractnode import register, AbstractNode
 from .resource import Resource
 from .list import List
+from ..log import logger
 
 def to_abstract_node(x):
     assert isinstance(x, (AbstractNode, dict)), x
@@ -99,17 +100,41 @@ class Or(ListOperator):
     __slots__ = ()
     _type = 'or'
 @register
-class First(ListNodeOperator):
-    __slots__ = ()
-    _type = 'first'
-@register
-class Last(ListNodeOperator):
-    __slots__ = ()
-    _type = 'last'
-@register
 class Exists(ListNodeOperator):
     __slots__ = ()
     _type = 'exists'
+
+@register
+class Nth(ListNodeOperator):
+    __slots__ = ()
+    _possible_attributes = ('index', 'list')
+    _type = 'nth'
+
+    def _check_attributes(self, attributes):
+        super()._check_attributes(attributes)
+        if not isinstance(attributes['index'], int):
+            raise TypeError('index should be an integer, not %r' %
+                    attributes['index'])
+    def traverse(self, predicate):
+        if isinstance(self.list, List) or not isinstance(self.list, Resource):
+            L = self.list
+        else:
+            L = List([self.list])
+        return predicate(self.__class__(
+                index=self.index,
+                list=L.traverse(predicate)))
+def First(list_):
+    logger.warning('Using deprecated alias `First(L)`. '
+                   'Use `first(L)` or `Nth(1, L)` instead.')
+    return first(list_)
+def Last(list_):
+    logger.warning('Using deprecated alias `Last(L)`. '
+                   'Use `last(L)` or `Nth(-1, L)` instead.')
+    return last(list_)
+def first(list_):
+    return Nth(1, list_)
+def last(list_):
+    return Nth(-1, list_)
 
 @register
 class Sort(PredicateListOperator):

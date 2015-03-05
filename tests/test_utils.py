@@ -1,7 +1,7 @@
 from unittest import TestCase
 import itertools
 
-from ppp_datamodel import Resource, Triple, Missing, Intersection, Union, List, Union, And, Or, Exists, First, Last, Sort
+from ppp_datamodel import Resource, Triple, Missing, Intersection, Union, List, Union, And, Or, Exists, Nth, first, last, Sort
 from ppp_datamodel import utils
 
 T = Triple
@@ -39,8 +39,8 @@ class UtilsTests(utils.InclusionTestCase):
             Resource('foo'), Resource('foo')),\
             Intersection([Resource('foo')]), Union([Resource('foo')]),\
             And([Resource('foo')]), Or([Resource('foo')]),
-            Exists(Resource('foo')), First(Resource('foo')),
-            Last(Resource('foo')), Sort(Resource('foo'), Resource('pred'))]
+            Exists(Resource('foo')), first(Resource('foo')),
+            last(Resource('foo')), Sort(Resource('foo'), Resource('pred'))]
         for (t1, t2) in itertools.permutations(l, 2):
             with self.assertRaises(AssertionError):
                 self.assertFalse(self.assertIncluded(t1, t2))
@@ -63,7 +63,7 @@ class UtilsTests(utils.InclusionTestCase):
                 Missing())
         tree2=Triple(List([Resource('bar'), Resource('foo')]),
                 List([Resource('a'), Resource('d'), Resource('b')]), Missing())
-        for op in [Last,First]:
+        for op in (last, first):
             self.assertIncluded(op(tree1), op(tree2))
             with self.assertRaises(AssertionError):
                 self.assertIncluded(op(tree2), op(tree1))
