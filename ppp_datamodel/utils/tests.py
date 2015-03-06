@@ -2,7 +2,7 @@
 
 """Utilities for making tests on datamodel objects."""
 
-from ..nodes import Resource, Triple, Missing, Intersection, List, Union, And, Or, Exists, First, Last, Sort
+from ..nodes import Resource, Triple, Missing, Intersection, List, Union, And, Or, Exists, Nth, Sort
 import unittest
 
 def contains_missing(tree):
@@ -59,7 +59,17 @@ class InclusionTestCase(unittest.TestCase):
             else:
                 self.assertIncluded(tree1.list, tree2.list,
                         originalTree1, originalTree2)
-        elif isinstance(tree1, (First, Last, Exists)):
+        elif isinstance(tree1, Nth):
+            if tree1.index == tree2.index:
+                self.assertIncluded(tree1.list, tree2.list,
+                        originalTree1, originalTree2)
+            else:
+                raise AssertionError(
+                        'Different index: %d and %d.\n%s ⊈ %s.' %
+                        (tree1.index, tree2.index,
+                            originalTree1, originalTree2))
+
+        elif isinstance(tree1, Exists):
             self.assertIncluded(tree1.list, tree2.list,
                     originalTree1, originalTree2)
         elif isinstance(tree1, (Intersection, Union, And, Or)):
