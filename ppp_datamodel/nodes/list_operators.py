@@ -125,14 +125,14 @@ class Nth(ListNodeOperator):
                 list=L.traverse(predicate)))
 def First(list_):
     logger.warning('Using deprecated alias `First(L)`. '
-                   'Use `first(L)` or `Nth(1, L)` instead.')
+                   'Use `first(L)` or `Nth(0, L)` instead.')
     return first(list_)
 def Last(list_):
     logger.warning('Using deprecated alias `Last(L)`. '
                    'Use `last(L)` or `Nth(-1, L)` instead.')
     return last(list_)
 def first(list_):
-    return Nth(1, list_)
+    return Nth(0, list_)
 def last(list_):
     return Nth(-1, list_)
 
