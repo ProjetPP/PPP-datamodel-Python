@@ -116,10 +116,10 @@ class Nth(ListNodeOperator):
             raise TypeError('index should be an integer, not %r' %
                     attributes['index'])
     def traverse(self, predicate):
-        if isinstance(self.list, List) or not isinstance(self.list, Resource):
-            L = self.list
-        else:
+        if isinstance(self.list, Resource):
             L = List([self.list])
+        else:
+            L = self.list
         return predicate(self.__class__(
                 index=self.index,
                 list=L.traverse(predicate)))
