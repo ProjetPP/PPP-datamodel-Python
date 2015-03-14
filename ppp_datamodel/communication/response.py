@@ -1,8 +1,12 @@
+import sys
 import json
 
 from ..nodes import AbstractNode
 from .traceitem import TraceItem
 from ..utils import SerializableAttributesHolder
+
+if sys.version_info[0] >= 3:
+    basestring = str
 
 class Response(SerializableAttributesHolder):
     """Represents a response.
@@ -16,8 +20,8 @@ class Response(SerializableAttributesHolder):
         super(Response, self)._check_attributes(attributes)
         assert {'language', 'tree', 'measures', 'trace'} == \
                 set(attributes.keys()), (attributes, extra)
-        assert isinstance(attributes['tree'], (str, AbstractNode))
-        assert isinstance(attributes['language'], str)
+        assert isinstance(attributes['tree'], (basestring, AbstractNode))
+        assert isinstance(attributes['language'], basestring), attributes
         assert isinstance(attributes['tree'], AbstractNode)
         assert isinstance(attributes['measures'], dict)
         assert isinstance(attributes['trace'], list)
