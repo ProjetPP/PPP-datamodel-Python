@@ -14,6 +14,9 @@ class TraceItem(SerializableAttributesHolder):
         super(TraceItem, self)._check_attributes(attributes)
         assert {'module', 'tree', 'measures'} == \
                 set(attributes.keys()), (attributes, extra)
+        assert isinstance(attributes['module'], str), module
+        assert isinstance(attributes['tree'], AbstractNode)
+        assert isinstance(attributes['measures'], dict)
 
     def __eq__(self, other):
         if not isinstance(other, TraceItem):

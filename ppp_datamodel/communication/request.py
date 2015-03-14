@@ -17,6 +17,10 @@ class Request(SerializableAttributesHolder):
         assert {'id', 'language', 'tree'}.issubset(set(attributes.keys())), \
                 (attributes, extra)
         assert isinstance(attributes['tree'], (str, AbstractNode))
+        assert isinstance(attributes['language'], str)
+        assert isinstance(attributes['tree'], AbstractNode)
+        assert isinstance(attributes['measures'], dict)
+        assert isinstance(attributes['trace'], list)
 
     def _parse_attributes(self, attributes):
         attributes['measures'] = attributes.get('measures', {})
