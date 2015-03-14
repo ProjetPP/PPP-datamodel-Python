@@ -2,54 +2,48 @@ import json
 
 from ..nodes import AbstractNode
 from .traceitem import TraceItem
+from ..utils import SerializableAttributesHolder
 
-class Response:
+class Response(SerializableAttributesHolder):
     """Represents a response.
     https://github.com/ProjetPP/Documentation/blob/master/module-communication.md#response
     """
-    __slots__ = ('language', 'tree', 'measures', 'trace')
+    __slots__ = ()
+    _possible_attributes = ('language', 'tree', 'measures', 'trace')
 
-    def __init__(self, language, tree, measures, trace):
+
+    def _check_attributes(self, attributes, extra=None):
+        super(Response, self)._check_attributes(attributes)
+        assert {'language', 'tree', 'measures', 'trace'} == \
+                set(attributes.keys()), (attributes, extra)
+        assert isinstance(attributes['tree'], (str, AbstractNode))
+
+    def _parse_attributes(self, attributes):
+        tree = attributes['tree']
         if isinstance(tree, dict):
             tree = AbstractNode.from_dict(tree)
         elif isinstance(tree, str):
             tree = AbstractNode.from_json(tree)
-        self.language = language
-        self.measures = measures
-        self.tree = tree
-        self.trace = [x if isinstance(x, TraceItem) else TraceItem.from_dict(x)
-                      for x in trace]
-
-    def __repr__(self):
-        return '<PPP response language=%r, tree=%r, measures=%r, trace=%r>'%\
-                (self.language, self.tree, self.measures, self.trace)
+        attributes['tree'] = tree
+        attributes['trace'] = \
+                [x if isinstance(x, TraceItem) else TraceItem.from_dict(x)
+                 for x in attributes['trace']]
+        super(Response, self)._parse_attributes(attributes)
 
     def __eq__(self, other):
         if not isinstance(other, Response):
             return False
-        return self.language == other.language and \
-                self.tree == other.tree and \
-                self.measures == other.measures and \
-                self.trace == other.trace
+        else:
+            return super(Response, self).__eq__(other)
 
     def __hash__(self):
-        return hash((self.language, self.tree, self.measures, self.trace))
+        return hash((Request, self._attributes))
 
     @classmethod
-    def from_json(cls, data):
-        data = json.loads(data)
-        return cls.from_dict(data)
-
-    @classmethod
-    def from_dict(cls, data):
-        return cls(data['language'], data['tree'], data['measures'],
-                   list(map(TraceItem.from_dict, data['trace'])))
-
-    def as_dict(self):
-        return {'language': self.language,
-                'tree': self.tree.as_dict(),
-                'measures': self.measures,
-                'trace': [x.as_dict() for x in self.trace]
-               }
-    def as_json(self):
-        return json.dumps(self.as_dict())
+    def deserialize_attribute(cls, key, value):
+        if key == 'tree':
+            return AbstractNode.deserialize_attribute(key, value)
+        elif key == 'trace':
+            return [TraceItem.from_dict(x) for x in value]
+        else:
+            return value
