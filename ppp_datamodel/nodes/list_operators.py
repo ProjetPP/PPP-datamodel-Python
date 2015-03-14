@@ -113,7 +113,7 @@ class Nth(ListNodeOperator):
     _type = 'nth'
 
     def _check_attributes(self, attributes):
-        super()._check_attributes(attributes)
+        super(ListNodeOperator, self)._check_attributes(attributes)
         if not isinstance(attributes['index'], int):
             raise TypeError('index should be an integer, not %r' %
                     attributes['index'])
