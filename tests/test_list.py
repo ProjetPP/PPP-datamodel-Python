@@ -12,4 +12,6 @@ class ListTests(TestCase):
         self.assertEqual(List([R('foo')]), List([R('foo')]))
         self.assertEqual(List([R('foo')]), R('foo'))
         self.assertNotEqual(List([R('foo')]), R('bar'))
+        self.assertEqual(R('foo'), List([R('foo')]))
+        self.assertNotEqual(R('bar'), List([R('foo')]))
 

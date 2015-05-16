@@ -19,6 +19,15 @@ class SerializableTypedAttributesHolder(SerializableAttributesHolder, TypedAttri
     def _select_class(cls, data):
         return TYPE_TO_CLASS[data['type']]
 
+    def __eq__(self, other):
+        if isinstance(other, dict):
+            return self == SerializableTypedAttributesHolder.from_dict(other)
+        else:
+            return super(SerializableTypedAttributesHolder, self).__eq__(other)
+
+    def __hash__(self):
+        return super(SerializableTypedAttributesHolder, self).__hash__()
+
 TYPE_TO_CLASS = {}
 def register(cls):
     """Register a class to make it available to the deserializer."""
