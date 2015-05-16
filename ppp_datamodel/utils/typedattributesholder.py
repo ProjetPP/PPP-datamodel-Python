@@ -31,8 +31,11 @@ class TypedAttributesHolder(AttributesHolder):
         """Tests equality with another AttributesHolder instance."""
         if isinstance(other, dict):
             return self.as_dict() == other
-        else:
+        elif isinstance(other, TypedAttributesHolder) and \
+                self._type == other._type:
             return super(TypedAttributesHolder, self).__eq__(other)
+        else:
+            return NotImplemented
 
     def __hash__(self):
         return hash(frozenset(self._attributes.items()))

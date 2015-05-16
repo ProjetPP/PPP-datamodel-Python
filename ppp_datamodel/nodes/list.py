@@ -31,6 +31,10 @@ class List(AbstractNode):
     def __hash__(self):
         return hash(tuple(self.list))
 
+    def __eq__(self, other):
+        return (isinstance(other, List) and self.list == other.list) or \
+                (len(self.list) == 1 and self.list[0] == other)
+
     def as_dict(self):
         return {'type': self.type, 'list': [x.as_dict() for x in self.list]}
 
