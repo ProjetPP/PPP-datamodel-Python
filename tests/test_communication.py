@@ -43,6 +43,23 @@ class ResponseTest(TestCase):
                          Response.from_json(json.dumps(r)))
         self.assertEqual(json.loads(Response.from_dict(r).as_json()), r)
 
+    def testFromLegacyJson(self):
+        r1 = {'language': 'en', 'measures': {},
+             'trace': [{'module': 'foo', 'tree': {'type': 'missing'}, 'measures': {}}],
+             'tree': {'type': 'resource', 'value': 'foo'}}
+        r2 = {'language': 'en', 'measures': {},
+             'trace': [{'module': 'foo', 'tree': {'type': 'missing'}, 'measures': {},
+                 'times': {}}],
+             'tree': {'type': 'resource', 'value': 'foo'}}
+        t = [TraceItem('foo', Missing(), {}, {})]
+        self.assertEqual(Response('en', Resource(value='foo'), {}, t),
+                         Response.from_json(json.dumps(r1)))
+        self.assertEqual(Response('en', Resource(value='foo'), {}, t),
+                         Response.from_dict(r1))
+        self.assertEqual(Response('en', Resource(value='foo'), {}, t),
+                         Response.from_json(json.dumps(r1)))
+        self.assertEqual(json.loads(Response.from_dict(r1).as_json()), r2)
+
 class TraceItemTest(TestCase):
     def testFromDict(self):
         d = {'tree': {'type': 'missing'}, 'module': 'foo', 'measures': {}, 'times': {}}
