@@ -31,9 +31,10 @@ class ResponseTest(TestCase):
 
     def testFromJson(self):
         r = {'language': 'en', 'measures': {},
-             'trace': [{'module': 'foo', 'tree': {'type': 'missing'}, 'measures': {}}],
+             'trace': [{'module': 'foo', 'tree': {'type': 'missing'}, 'measures': {},
+                 'times': {}}],
              'tree': {'type': 'resource', 'value': 'foo'}}
-        t = [TraceItem('foo', Missing(), {})]
+        t = [TraceItem('foo', Missing(), {}, {})]
         self.assertEqual(Response('en', Resource(value='foo'), {}, t),
                          Response.from_json(json.dumps(r)))
         self.assertEqual(Response('en', Resource(value='foo'), {}, t),
@@ -44,6 +45,7 @@ class ResponseTest(TestCase):
 
 class TraceItemTest(TestCase):
     def testFromDict(self):
-        d = {'tree': {'type': 'missing'}, 'module': 'foo', 'measures': {}}
+        d = {'tree': {'type': 'missing'}, 'module': 'foo', 'measures': {}, 'times': {}}
         self.assertEqual(TraceItem.from_dict(d),
-                TraceItem('foo', Missing(), {}))
+                TraceItem('foo', Missing(), {}, {}))
+
