@@ -2,6 +2,7 @@ import sys
 import json
 
 from ..nodes import AbstractNode
+from ..exceptions import AttributeNotProvided
 from ..utils import SerializableAttributesHolder
 
 if sys.version_info[0] >= 3:
@@ -17,12 +18,17 @@ class TraceItem(SerializableAttributesHolder):
     def _check_attributes(self, attributes, extra=None):
         super(TraceItem, self)._check_attributes(attributes)
         # Allow missing 'time' attribute for now (transitioning)
-        assert {'module', 'tree', 'measures'}.issubset(set(attributes.keys())),\
-                (attributes, extra)
-        assert isinstance(attributes['module'], basestring), module
-        assert isinstance(attributes['tree'], AbstractNode)
-        assert isinstance(attributes['measures'], dict)
-        assert isinstance(attributes.get('times', {}), dict)
+        missing_attributes = {'module', 'tree', 'measures'} - set(attributes.keys())
+        if missing_attributes:
+            raise AttributeNotProvided('Missing attributes: %s' % ', '.join(missing_attributes))
+        if not isinstance(attributes['module'], basestring):
+            raise TypeError('"module" attribute is not a string.')
+        if not isinstance(attributes['tree'], AbstractNode):
+            raise TypeError('"tree" attribute is not an AbstractNode.')
+        if not isinstance(attributes['measures'], dict):
+            raise TypeError('"measures" attribute is not a dict.')
+        if 'times' in attributes and not isinstance(attributes['times'], dict):
+            raise TypeError('"times" attribute is not a dict.')
 
     def _parse_attributes(self, attributes):
         # Allow missing 'time' attribute for now (transitioning)
