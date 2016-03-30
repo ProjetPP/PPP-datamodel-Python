@@ -4,6 +4,7 @@ import json
 from .traceitem import TraceItem
 from ..nodes import AbstractNode
 from .traceitem import TraceItem
+from ..exceptions import AttributeNotProvided
 from ..utils import SerializableAttributesHolder
 
 if sys.version_info[0] >= 3:
@@ -18,13 +19,17 @@ class Request(SerializableAttributesHolder):
 
     def _check_attributes(self, attributes, extra=None):
         super(Request, self)._check_attributes(attributes)
-        assert {'id', 'language', 'tree'}.issubset(set(attributes.keys())), \
-                (attributes, extra)
-        assert isinstance(attributes['tree'], (basestring, AbstractNode))
-        assert isinstance(attributes['language'], basestring), attributes
-        assert isinstance(attributes['tree'], AbstractNode)
-        assert isinstance(attributes['measures'], dict)
-        assert isinstance(attributes['trace'], list)
+        missing_attributes = {'id', 'language', 'tree'} - set(attributes.keys())
+        if missing_attributes:
+            raise AttributeNotProvided('Missing attributes: %s' % ', '.join(missing_attributes))
+        if not isinstance(attributes['language'], basestring):
+            raise TypeError('"language" attribute is not a string.')
+        if not isinstance(attributes['tree'], AbstractNode):
+            raise TypeError('"tree" attribute is not an AbstractNode.')
+        if not isinstance(attributes['measures'], dict):
+            raise TypeError('"measures" attribute is not a dict.')
+        if not isinstance(attributes['trace'], list):
+            raise TypeError('"trace" attribute is not a list.')
 
     def _parse_attributes(self, attributes):
         attributes['measures'] = attributes.get('measures', {})
