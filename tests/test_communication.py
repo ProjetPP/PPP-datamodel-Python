@@ -66,3 +66,7 @@ class TraceItemTest(TestCase):
         self.assertEqual(TraceItem.from_dict(d),
                 TraceItem('foo', Missing(), {}, {}))
 
+    def testLegacyTraceItem(self):
+        self.assertEqual(TraceItem('foo', Resource(value='bar'), {}),
+                TraceItem('foo', Resource(value='bar'), {}, {}))
+
