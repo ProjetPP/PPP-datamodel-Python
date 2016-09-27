@@ -7,12 +7,14 @@ from ppp_datamodel.communication import Request, TraceItem, Response
 class RequestTest(TestCase):
     def testEquality(self):
         self.assertEqual(Request('1', 'en', Resource(value='foo'), {}, []),
-                         Request('1', 'en', Resource(value='foo'), {}, []))
+                         Request('1', 'en', Resource(value='foo'), {}, [], 'en'))
         self.assertNotEqual(Request('1', 'en', Resource(value='foo'), {}, []),
                             Request('1', 'en', Resource(value='bar'), {}, []))
+        self.assertNotEqual(Request('1', 'en', Resource(value='foo'), {}, []),
+                            Request('1', 'en', Resource(value='foo'), {}, [], 'fr'))
 
     def testFromJson(self):
-        j = {'id': '1', 'language': 'en', 'measures': {}, 'trace': [],
+        j = {'id': '1', 'language': 'en', 'response-language': 'en', 'measures': {}, 'trace': [],
              'tree': {'type': 'resource', 'value': 'foo'}}
         self.assertEqual(Request('1', 'en', Resource(value='foo'), {}, []),
                          Request.from_dict(j))

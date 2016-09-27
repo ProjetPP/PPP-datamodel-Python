@@ -15,7 +15,7 @@ class Request(SerializableAttributesHolder):
     https://github.com/ProjetPP/Documentation/blob/master/module-communication.md#request
     """
     __slots__ = ()
-    _possible_attributes = ('id', 'language', 'tree', 'measures', 'trace')
+    _possible_attributes = ('id', 'language', 'tree', 'measures', 'trace', 'response_language')
 
     def _check_attributes(self, attributes, extra=None):
         super(Request, self)._check_attributes(attributes)
@@ -24,6 +24,10 @@ class Request(SerializableAttributesHolder):
             raise AttributeNotProvided('Missing attributes: %s' % ', '.join(missing_attributes))
         if not isinstance(attributes['language'], basestring):
             raise TypeError('"language" attribute is not a string.')
+        if 'response_language' not in attributes:
+            attributes['response_language'] = attributes['language']
+        elif not isinstance(attributes['response_language'], basestring):
+            raise TypeError('"response_language" attribute is not a string.')
         if not isinstance(attributes['tree'], AbstractNode):
             raise TypeError('"tree" attribute is not an AbstractNode.')
         if not isinstance(attributes['measures'], dict):
