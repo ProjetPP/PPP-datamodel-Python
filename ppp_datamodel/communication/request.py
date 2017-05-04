@@ -24,8 +24,8 @@ class Request(SerializableAttributesHolder):
             raise AttributeNotProvided('Missing attributes: %s' % ', '.join(missing_attributes))
         if not isinstance(attributes['language'], basestring):
             raise TypeError('"language" attribute is not a string.')
-        attributes.setdefault(measures, {})
-        attributes.setdefault(trace, [])
+        attributes.setdefault('measures', {})
+        attributes.setdefault('trace', [])
         if 'response_language' not in attributes:
             attributes['response_language'] = attributes['language']
         elif not isinstance(attributes['response_language'], basestring):
