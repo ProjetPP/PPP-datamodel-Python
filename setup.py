@@ -10,11 +10,11 @@ setup(
     url='https://github.com/ProjetPP/PPP-datamodel-Python',
     author='Valentin Lorentz',
     author_email='valentin.lorentz+ppp@ens-lyon.org',
-    license='MIT',
+    license='AGPLv3+',
     classifiers=[
         'Development Status :: 1 - Planning',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
